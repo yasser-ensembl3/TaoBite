@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obsidian PDF Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .nav-links {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 60px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9ff;
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .upload-text {
+            font-size: 1.2rem;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .selected-file {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f5e9;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .selected-file.show {
+            display: block;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            width: 100%;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .result {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .info-box h3 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info-box li {
+            padding: 5px 0;
+            color: #555;
+        }
+
+        .info-box li:before {
+            content: "✓ ";
+            color: #1976d2;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .preview {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            margin-top: 15px;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            margin-top: 15px;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📓 Obsidian PDF Converter</h1>
+            <p>Convert PDFs to Markdown with smart tracking, auto-categorization & auto-tagging</p>
+        </div>
+
+        <div class="nav-links">
+            <a href="/">← LlamaParse Converter</a>
+            <a href="/quote-extractor">Quote Extractor</a>
+            <a href="/qdrant/viewer">Qdrant Viewer</a>
+        </div>
+
+        <div class="card">
+            <h2 style="margin-bottom: 20px; color: #333;">🔄 pdfplumber Converter</h2>
+
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📄</div>
+                <div class="upload-text">Click or drag & drop your PDF here</div>
+                <div style="font-size: 0.9rem; color: #666;">Free conversion with pdfplumber</div>
+                <input type="file" id="fileInput" accept=".pdf">
+            </div>
+
+            <div class="selected-file" id="selectedFile">
+                <strong>Selected file:</strong>
+                <div id="fileName" style="margin-top: 5px; word-break: break-all;"></div>
+            </div>
+
+            <button class="btn" id="convertBtn">
+                Convert to Obsidian Markdown
+            </button>
+
+            <div class="result" id="resultArea"></div>
+
+            <div class="info-box">
+                <h3>✨ Features</h3>
+                <ul>
+                    <li><strong>Smart Fallback</strong> - Tries pdfplumber first, then LlamaParse if needed</li>
+                    <li><strong>Free & Local</strong> - pdfplumber has no API costs</li>
+                    <li><strong>Smart Tracking</strong> - MD5 hash to avoid reprocessing</li>
+                    <li><strong>Auto-Categorization</strong> - Based on folder structure</li>
+                    <li><strong>Auto-Tagging</strong> - From folders and content</li>
+                    <li><strong>YAML Frontmatter</strong> - Obsidian-compatible metadata</li>
+                    <li><strong>Page Markers</strong> - Easy navigation between pages</li>
+                    <li><strong>Notable Figures Detection</strong> - Buffett, Bezos, Musk, Jobs, etc.</li>
+                </ul>
+            </div>
+
+            <div class="info-box" style="background: #e8f5e9; margin-top: 15px;">
+                <h3 style="color: #2e7d32;">🔄 Smart Conversion Strategy</h3>
+                <p style="color: #555; line-height: 1.6;">
+                    <strong>1st try:</strong> pdfplumber (fast, free, local) ✨<br>
+                    <strong>If it fails:</strong> Automatic fallback to LlamaParse (cloud API, OCR support) 🚀<br>
+                    <strong>Result:</strong> You get the best of both worlds!
+                </p>
+            </div>
+
+            <div class="info-box" style="background: #fff3e0; margin-top: 15px;">
+                <h3 style="color: #e65100;">⚠️ Limitations</h3>
+                <ul style="list-style-type: disc; padding-left: 20px;">
+                    <li style="color: #e65100;">No OCR - Won't work on scanned PDFs</li>
+                    <li style="color: #e65100;">Text-only - No image extraction</li>
+                    <li style="color: #e65100;">For scanned PDFs, use LlamaParse instead</li>
+                </ul>
+            </div>
+
+            <div class="info-box" style="background: #f3e5f5; margin-top: 15px;">
+                <h3 style="color: #6a1b9a;">📋 Example Output</h3>
+                <div class="code-block">---
+title: "Document Title"
+author: "Author Name"
+category: business-analysis
+tags: [business-breakdowns, knowledge, notable-figure]
+source: pdf
+pdf_path: "Knowledge/Business Breakdowns/example.pdf"
+converted_date: 2025-11-12T10:30:00
+pages: 42
+---
+
+---
+### Page 1 of 42
+
+[Content here...]</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const selectedFile = document.getElementById('selectedFile');
+        const fileName = document.getElementById('fileName');
+        const convertBtn = document.getElementById('convertBtn');
+        const resultArea = document.getElementById('resultArea');
+
+        let selectedPdfFile = null;
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleFileSelect(file);
+            }
+        });
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#764ba2';
+            uploadArea.style.background = '#e8ebff';
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = '#667eea';
+            uploadArea.style.background = '#f8f9ff';
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#667eea';
+            uploadArea.style.background = '#f8f9ff';
+
+            const file = e.dataTransfer.files[0];
+            if (file && file.type === 'application/pdf') {
+                fileInput.files = e.dataTransfer.files;
+                handleFileSelect(file);
+            } else {
+                alert('Please select a PDF file');
+            }
+        });
+
+        function handleFileSelect(file) {
+            selectedPdfFile = file;
+            fileName.textContent = file.name + ' (' + formatFileSize(file.size) + ')';
+            selectedFile.classList.add('show');
+            resultArea.classList.remove('show');
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+        }
+
+        convertBtn.addEventListener('click', async () => {
+            if (!selectedPdfFile) return;
+
+            convertBtn.disabled = true;
+            resultArea.classList.add('show');
+            resultArea.innerHTML = '<div class="spinner"></div><p style="text-align: center; margin-top: 10px;">Converting...</p>';
+
+            const formData = new FormData();
+            formData.append('file', selectedPdfFile);
+
+            try {
+                const response = await fetch('/obsidian-convert', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displaySuccess(data);
+                } else {
+                    displayError(data.error || 'Conversion failed');
+                }
+            } catch (error) {
+                displayError('Connection error: ' + error.message);
+            } finally {
+                convertBtn.disabled = false;
+            }
+        });
+
+        function displaySuccess(data) {
+            let html = `
+                <div class="success">
+                    <h3 style="margin-bottom: 10px; font-size: 1.3rem;">✅ Conversion Successful!</h3>
+                    <p style="margin-bottom: 15px;">Your PDF has been converted to Obsidian Markdown format.</p>
+
+                    <div class="stat-grid">
+                        <div class="stat-item">
+                            <div class="stat-label">Conversion Method</div>
+                            <div class="stat-value" style="font-size: 1.1rem;">${data.method === 'pdfplumber' ? '📄 pdfplumber' : '🚀 LlamaParse'}</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Category</div>
+                            <div class="stat-value">${data.category}</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Pages</div>
+                            <div class="stat-value">${data.pages}</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Tags</div>
+                            <div class="stat-value">${data.tags.length}</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">File Size</div>
+                            <div class="stat-value">${formatFileSize(data.markdown_size)}</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <strong>Tags:</strong> ${data.tags.map(tag => `<span style="background: #667eea; color: white; padding: 4px 12px; border-radius: 12px; margin: 2px; display: inline-block; font-size: 0.85rem;">${tag}</span>`).join('')}
+                    </div>
+
+                    <button class="btn download-btn" onclick="downloadMarkdown('${data.job_id}')">
+                        📥 Download Markdown
+                    </button>
+                </div>
+
+                <div style="background: #f5f5f5; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                    <h4 style="margin-bottom: 10px;">📖 Preview (first 50 lines):</h4>
+                    <div class="preview">${escapeHtml(data.preview)}</div>
+                </div>
+            `;
+
+            resultArea.innerHTML = html;
+        }
+
+        function displayError(message) {
+            resultArea.innerHTML = `
+                <div class="error">
+                    <h3 style="margin-bottom: 10px;">❌ Conversion Failed</h3>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        function downloadMarkdown(jobId) {
+            window.location.href = '/obsidian-download/' + jobId;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

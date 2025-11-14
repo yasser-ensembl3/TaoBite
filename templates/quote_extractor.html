@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quote Extractor - Tao of Founders</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #764ba2;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .markdown-preview {
+            background: #f8f9ff;
+            padding: 30px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            white-space: pre-wrap;
+            line-height: 1.8;
+            font-size: 1.05rem;
+            color: #333;
+            max-height: 600px;
+            overflow-y: auto;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        .stats-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1976d2;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .back-btn {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 10px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .download-btn {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-btn">← Back to Home</a>
+
+        <div class="header">
+            <h1>📚 Quote Extractor</h1>
+            <p>Tao of Founders - Raw Citations from Your Knowledge Base</p>
+        </div>
+
+        <div class="card">
+            <div class="input-group">
+                <label for="keywords">Keywords or Topic</label>
+                <input
+                    type="text"
+                    id="keywords"
+                    placeholder="e.g., flow state, resilience, decision-making"
+                    onkeypress="if(event.key === 'Enter') extractQuotes()"
+                >
+            </div>
+
+            <div class="input-group">
+                <label for="topK">Number of Quotes</label>
+                <select id="topK">
+                    <option value="3">3 quotes</option>
+                    <option value="5" selected>5 quotes</option>
+                    <option value="10">10 quotes</option>
+                    <option value="15">15 quotes</option>
+                    <option value="20">20 quotes</option>
+                </select>
+            </div>
+
+            <button class="btn" id="extractBtn" onclick="extractQuotes()">
+                Extract Quotes
+            </button>
+
+            <div id="results" class="results">
+                <div id="statsBox"></div>
+                <button class="download-btn" onclick="downloadMarkdown()">
+                    ⬇️ Download Markdown
+                </button>
+                <div id="markdownPreview"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentMarkdown = '';
+
+        async function extractQuotes() {
+            const keywords = document.getElementById('keywords').value.trim();
+            const topK = parseInt(document.getElementById('topK').value);
+            const extractBtn = document.getElementById('extractBtn');
+            const resultsDiv = document.getElementById('results');
+
+            if (!keywords) {
+                alert('Please enter keywords');
+                return;
+            }
+
+            // Show loading
+            extractBtn.disabled = true;
+            extractBtn.innerHTML = '<span class="spinner"></span> Extracting quotes...';
+            resultsDiv.classList.remove('show');
+
+            try {
+                const response = await fetch('/extract-quotes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        keywords: keywords,
+                        collection_name: 'pdf_documents',
+                        top_k: topK
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayResults(data);
+                } else {
+                    showError(data.error || 'Error extracting quotes');
+                }
+            } catch (error) {
+                showError('Error: ' + error.message);
+            } finally {
+                extractBtn.disabled = false;
+                extractBtn.innerHTML = 'Extract Quotes';
+            }
+        }
+
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            const statsBox = document.getElementById('statsBox');
+            const markdownPreview = document.getElementById('markdownPreview');
+
+            currentMarkdown = data.markdown;
+
+            // Display stats
+            statsBox.innerHTML = `
+                <div class="stat">
+                    <div class="stat-value">${data.keywords}</div>
+                    <div class="stat-label">Keywords</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">${data.quotes_count}</div>
+                    <div class="stat-label">Quotes Found</div>
+                </div>
+            `;
+
+            // Display markdown preview
+            markdownPreview.innerHTML = `
+                <div class="markdown-preview">${escapeHtml(data.markdown)}</div>
+            `;
+
+            resultsDiv.classList.add('show');
+        }
+
+        function downloadMarkdown() {
+            if (!currentMarkdown) return;
+
+            const blob = new Blob([currentMarkdown], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `quotes_${Date.now()}.md`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function showError(message) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `<div class="error">✗ ${message}</div>`;
+            resultsDiv.classList.add('show');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

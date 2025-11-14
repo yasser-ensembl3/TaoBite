@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tao of Founders - Knowledge Base</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 60px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9ff;
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .upload-text {
+            font-size: 1.2rem;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .selected-file {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f5e9;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .selected-file.show {
+            display: block;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            width: 100%;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .status {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .status.show {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .status-message {
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            color: #666;
+        }
+
+        .success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Search Section */
+        .search-section {
+            margin-top: 40px;
+        }
+
+        .search-input-group {
+            margin-bottom: 20px;
+        }
+
+        .search-input-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            margin-top: 10px;
+        }
+
+        .quotes-result {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .quotes-result.show {
+            display: block;
+        }
+
+        .quote-item {
+            background: #f8f9ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+        }
+
+        .quote-text {
+            font-size: 1.1rem;
+            font-style: italic;
+            color: #333;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .quote-author {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .quote-relevance {
+            font-size: 0.9rem;
+            color: #666;
+            margin-left: 10px;
+        }
+
+        .download-quotes-btn {
+            background: linear-gradient(135deg, #f5576c 0%, #ff6a00 100%);
+            margin-top: 15px;
+        }
+
+        .divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #667eea, transparent);
+            margin: 40px 0;
+        }
+
+        .info-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #e3f2fd;
+            color: #1976d2;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Tao of Founders</h1>
+            <p>Knowledge Base System - Upload PDFs, Build Embeddings, Extract Insights</p>
+        </div>
+
+        <!-- Section 1: Upload & Process PDFs -->
+        <div class="card">
+            <div class="section-title">📤 1. Upload & Process PDF</div>
+
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Click or drag & drop your PDF here</div>
+                <div style="font-size: 0.9rem; color: #666;">pdfplumber (free, local) with LlamaParse fallback</div>
+                <input type="file" id="fileInput" accept=".pdf">
+            </div>
+
+            <div class="selected-file" id="selectedFile">
+                <strong>Selected file:</strong>
+                <div id="fileName" style="margin-top: 5px; word-break: break-all;"></div>
+            </div>
+
+            <button class="btn" id="convertBtn" style="display: none;">
+                🔄 Convert & Inject into Knowledge Base
+            </button>
+
+            <div class="status" id="statusArea">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%">0%</div>
+                </div>
+                <div class="status-message" id="statusMessage"></div>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Section 2: Search & Extract Quotes -->
+        <div class="card">
+            <div class="section-title">🔍 2. Search & Extract Quotes</div>
+
+            <div style="background: #e3f2fd; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #1976d2;">
+                <strong style="color: #1976d2;">💡 How it works:</strong> Enter keywords to search your knowledge base and extract relevant quotes with Claude AI.
+            </div>
+
+            <div class="search-input-group">
+                <label for="keywordsInput">Keywords or Topic</label>
+                <input
+                    type="text"
+                    id="keywordsInput"
+                    class="search-input"
+                    placeholder="e.g., flow state, decision-making, entrepreneurship, resilience..."
+                >
+            </div>
+
+            <div class="search-input-group">
+                <label for="numQuotesInput">Number of Quotes</label>
+                <select id="numQuotesInput" class="search-input">
+                    <option value="3">3 quotes</option>
+                    <option value="5" selected>5 quotes</option>
+                    <option value="7">7 quotes</option>
+                    <option value="10">10 quotes</option>
+                </select>
+            </div>
+
+            <button class="btn search-btn" id="searchBtn">
+                🔍 Search & Extract Quotes
+            </button>
+
+            <div class="quotes-result" id="quotesResult"></div>
+        </div>
+
+        <!-- Stats Info -->
+        <div class="card" style="background: #f8f9ff; border: 2px solid #667eea;">
+            <div style="text-align: center;">
+                <h3 style="color: #667eea; margin-bottom: 15px;">📊 System Info</h3>
+                <div id="statsInfo">
+                    <span class="info-badge">Collection: pdf_documents</span>
+                    <span class="info-badge" id="vectorCount">Vectors: Loading...</span>
+                    <span class="info-badge">Model: text-embedding-3-small</span>
+                    <span class="info-badge">AI: Claude 3 Haiku</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Upload section variables
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const selectedFile = document.getElementById('selectedFile');
+        const fileName = document.getElementById('fileName');
+        const convertBtn = document.getElementById('convertBtn');
+        const statusArea = document.getElementById('statusArea');
+        const statusMessage = document.getElementById('statusMessage');
+        const progressFill = document.getElementById('progressFill');
+
+        // Search section variables
+        const searchBtn = document.getElementById('searchBtn');
+        const keywordsInput = document.getElementById('keywordsInput');
+        const numQuotesInput = document.getElementById('numQuotesInput');
+        const quotesResult = document.getElementById('quotesResult');
+
+        let selectedPdfFile = null;
+        let currentMarkdown = null;
+
+        // Load vector count on page load
+        loadVectorCount();
+
+        // Upload area events
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) handleFileSelect(file);
+        });
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#764ba2';
+            uploadArea.style.background = '#e8ebff';
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = '#667eea';
+            uploadArea.style.background = '#f8f9ff';
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#667eea';
+            uploadArea.style.background = '#f8f9ff';
+
+            const file = e.dataTransfer.files[0];
+            if (file && file.type === 'application/pdf') {
+                fileInput.files = e.dataTransfer.files;
+                handleFileSelect(file);
+            } else {
+                alert('Please select a PDF file');
+            }
+        });
+
+        function handleFileSelect(file) {
+            selectedPdfFile = file;
+            fileName.textContent = file.name + ' (' + formatFileSize(file.size) + ')';
+            selectedFile.classList.add('show');
+            convertBtn.style.display = 'block';
+            statusArea.classList.remove('show');
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+        }
+
+        // Convert & Auto-inject
+        convertBtn.addEventListener('click', async () => {
+            if (!selectedPdfFile) return;
+
+            convertBtn.disabled = true;
+            statusArea.classList.add('show');
+            updateProgress(10, 'Uploading PDF...');
+
+            const formData = new FormData();
+            formData.append('file', selectedPdfFile);
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    const jobId = data.job_id;
+                    updateProgress(30, 'Converting with pdfplumber...');
+                    pollStatus(jobId);
+                } else {
+                    showError(data.error || 'Upload error');
+                }
+            } catch (error) {
+                showError('Connection error: ' + error.message);
+            }
+        });
+
+        function pollStatus(jobId) {
+            const interval = setInterval(async () => {
+                try {
+                    const response = await fetch('/status/' + jobId);
+                    const data = await response.json();
+
+                    if (data.status === 'processing') {
+                        updateProgress(60, data.message);
+                    } else if (data.status === 'completed') {
+                        clearInterval(interval);
+                        updateProgress(70, 'Conversion completed! Starting auto-pipeline...');
+                        runAutoPipeline(jobId);
+                    } else if (data.status === 'error') {
+                        clearInterval(interval);
+                        showError(data.message);
+                    }
+                } catch (error) {
+                    clearInterval(interval);
+                    showError('Status check error');
+                }
+            }, 2000);
+        }
+
+        async function runAutoPipeline(jobId) {
+            try {
+                updateProgress(75, 'Chunking and generating embeddings...');
+
+                const response = await fetch('/auto-pipeline/' + jobId, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        chunk_size: 1000,
+                        chunk_overlap: 200,
+                        collection_name: 'pdf_documents'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    updateProgress(100, 'Complete!');
+                    displaySuccess(data);
+                    loadVectorCount(); // Refresh vector count
+                } else {
+                    showError(data.error || 'Pipeline error');
+                }
+            } catch (error) {
+                showError('Error: ' + error.message);
+            }
+        }
+
+        function updateProgress(percent, message) {
+            progressFill.style.width = percent + '%';
+            progressFill.textContent = percent + '%';
+            statusMessage.innerHTML = '<span class="spinner"></span> ' + message;
+        }
+
+        function displaySuccess(data) {
+            const methodBadge = data.method === 'pdfplumber' ? '📄 pdfplumber' : '🚀 LlamaParse';
+            const methodColor = data.method === 'pdfplumber' ? '#2e7d32' : '#1976d2';
+
+            statusMessage.innerHTML = `
+                <div class="success" style="font-size: 1.2rem; font-weight: 700; padding: 25px;">
+                    ✅ Success! PDF processed and injected into knowledge base
+                    <div style="margin-top: 15px; font-size: 1rem;">
+                        <span style="background: ${methodColor}; color: white; padding: 6px 14px; border-radius: 12px; margin-right: 10px;">
+                            ${methodBadge}
+                        </span>
+                        <span style="background: #667eea; color: white; padding: 6px 14px; border-radius: 12px;">
+                            ${data.total_chunks} chunks
+                        </span>
+                        <span style="background: #11998e; color: white; padding: 6px 14px; border-radius: 12px; margin-left: 10px;">
+                            ${data.total_tokens} tokens
+                        </span>
+                    </div>
+                    <div style="margin-top: 15px; font-size: 0.95rem; color: #2e7d32;">
+                        📦 Total vectors in database: ${data.total_vectors_in_collection}
+                    </div>
+                </div>
+            `;
+            convertBtn.disabled = false;
+        }
+
+        function showError(message) {
+            statusMessage.innerHTML = `<div class="error">❌ ${message}</div>`;
+            convertBtn.disabled = false;
+        }
+
+        // Search & Extract Quotes
+        searchBtn.addEventListener('click', async () => {
+            const keywords = keywordsInput.value.trim();
+
+            if (!keywords) {
+                alert('Please enter keywords');
+                return;
+            }
+
+            searchBtn.disabled = true;
+            searchBtn.textContent = '🔍 Searching...';
+            quotesResult.innerHTML = '<div style="text-align: center; padding: 20px;"><span class="spinner"></span> Searching knowledge base and extracting quotes...</div>';
+            quotesResult.classList.add('show');
+
+            try {
+                const response = await fetch('/extract-quotes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        keywords: keywords,
+                        collection_name: 'pdf_documents',
+                        top_k: parseInt(numQuotesInput.value)
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayQuotes(data);
+                } else {
+                    quotesResult.innerHTML = `<div class="error">❌ ${data.error || 'Search error'}</div>`;
+                }
+            } catch (error) {
+                quotesResult.innerHTML = `<div class="error">❌ Connection error: ${error.message}</div>`;
+            } finally {
+                searchBtn.disabled = false;
+                searchBtn.textContent = '🔍 Search & Extract Quotes';
+            }
+        });
+
+        function displayQuotes(data) {
+            if (!data.success || data.quotes_count === 0) {
+                quotesResult.innerHTML = '<div class="error">No quotes found. Try different keywords.</div>';
+                return;
+            }
+
+            // Parse markdown to extract quotes
+            const lines = data.markdown.split('\n');
+            let quotesHtml = `
+                <div class="success" style="font-size: 1.1rem; font-weight: 600; margin-bottom: 20px;">
+                    ✅ Found ${data.quotes_count} relevant quote(s)
+                </div>
+            `;
+
+            let currentQuote = '';
+            let currentAuthor = '';
+
+            for (let line of lines) {
+                if (line.startsWith('> "')) {
+                    // Quote line
+                    currentQuote = line.substring(3, line.length - 1); // Remove > " and trailing "
+                } else if (line.startsWith('—')) {
+                    // Author line
+                    currentAuthor = line.substring(2).trim(); // Remove — and trim
+
+                    // Display the quote
+                    quotesHtml += `
+                        <div class="quote-item">
+                            <div class="quote-text">"${currentQuote}"</div>
+                            <div>
+                                <span class="quote-author">— ${currentAuthor}</span>
+                            </div>
+                        </div>
+                    `;
+                    currentQuote = '';
+                    currentAuthor = '';
+                }
+            }
+
+            quotesResult.innerHTML = quotesHtml;
+
+            // Add download button
+            const downloadBtn = document.createElement('button');
+            downloadBtn.className = 'btn download-quotes-btn';
+            downloadBtn.textContent = '📥 Download Quotes (Markdown)';
+            downloadBtn.onclick = () => downloadMarkdown(data.markdown, data.keywords);
+            quotesResult.appendChild(downloadBtn);
+
+            // Store markdown for download
+            currentMarkdown = data.markdown;
+        }
+
+        function downloadMarkdown(content, keywords) {
+            const blob = new Blob([content], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `quotes_${keywords.replace(/[^a-z0-9]/gi, '_')}.md`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        async function loadVectorCount() {
+            try {
+                const response = await fetch('/qdrant/collections');
+                const data = await response.json();
+
+                if (data.collections && data.collections.length > 0) {
+                    const collection = data.collections[0];
+                    document.getElementById('vectorCount').textContent = `Vectors: ${collection.vectors_count}`;
+                }
+            } catch (error) {
+                console.error('Error loading vector count:', error);
+            }
+        }
+    </script>
+</body>
+</html>
