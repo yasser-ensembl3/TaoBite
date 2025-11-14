@@ -1070,8 +1070,15 @@ if __name__ == '__main__':
     print("APPLICATION WEB LLAMAPARSE - PDF TO MARKDOWN")
     print("=" * 60)
     print("\n🚀 Démarrage de l'application...")
-    print("\nAccédez à l'application sur: http://localhost:8080")
+
+    # Get port from environment variable (for Render deployment)
+    port = int(os.environ.get('PORT', 8080))
+
+    print(f"\nAccédez à l'application sur: http://localhost:{port}")
     print("\nAppuyez sur Ctrl+C pour arrêter le serveur")
     print("=" * 60 + "\n")
 
-    app.run(debug=True, host='0.0.0.0', port=8080)
+    # In production (Render), debug should be False and use gunicorn
+    # For local development, use debug=True
+    debug_mode = os.environ.get('FLASK_ENV') != 'production'
+    app.run(debug=debug_mode, host='0.0.0.0', port=port)
