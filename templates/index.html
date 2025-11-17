@@ -285,6 +285,232 @@
             font-weight: 600;
             margin: 5px;
         }
+
+        .nav-links {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .nav-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 10px;
+            margin: 0 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .nav-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+            background: #f8f9ff;
+        }
+
+        /* Database Overview Collapsible */
+        .collapsible-header {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            border: 2px solid transparent;
+        }
+
+        .collapsible-header:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            border-color: #fff;
+        }
+
+        .collapsible-header:active {
+            transform: translateY(0px);
+        }
+
+        .collapsible-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .click-hint {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 400;
+            margin-left: 10px;
+        }
+
+        .collapsible-icon {
+            font-size: 1.8rem;
+            transition: transform 0.3s ease;
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .collapsible-icon.expanded {
+            transform: rotate(180deg);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .collapsible-content.expanded {
+            max-height: 800px;
+            overflow-y: auto;
+        }
+
+        .db-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .db-stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .db-stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .db-stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .document-item {
+            background: #f8f9ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .document-item:hover {
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transform: translateX(3px);
+        }
+
+        .document-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .document-stats {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .doc-stat {
+            background: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .doc-stat strong {
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .chunks-toggle {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .chunks-toggle:hover {
+            background: #764ba2;
+        }
+
+        .chunks-preview {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .chunks-preview.show {
+            display: block;
+        }
+
+        .chunk-preview-item {
+            background: #f8f9ff;
+            padding: 8px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            border-left: 2px solid #667eea;
+        }
+
+        .chunk-preview-header {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 4px;
+        }
+
+        .template-btn {
+            padding: 8px 16px;
+            background: #f8f9ff;
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .template-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .template-btn:active {
+            transform: translateY(0px);
+        }
     </style>
 </head>
 <body>
@@ -294,46 +520,72 @@
             <p>Knowledge Base System - Upload PDFs, Build Embeddings, Extract Insights</p>
         </div>
 
-        <!-- Section 1: Upload & Process PDFs -->
-        <div class="card">
-            <div class="section-title">📤 1. Upload & Process PDF</div>
-
-            <div class="upload-area" id="uploadArea">
-                <div class="upload-icon">📁</div>
-                <div class="upload-text">Click or drag & drop your PDF here</div>
-                <div style="font-size: 0.9rem; color: #666;">pdfplumber (free, local) with LlamaParse fallback</div>
-                <input type="file" id="fileInput" accept=".pdf">
-            </div>
-
-            <div class="selected-file" id="selectedFile">
-                <strong>Selected file:</strong>
-                <div id="fileName" style="margin-top: 5px; word-break: break-all;"></div>
-            </div>
-
-            <button class="btn" id="convertBtn" style="display: none;">
-                🔄 Convert & Inject into Knowledge Base
-            </button>
-
-            <div class="status" id="statusArea">
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill" style="width: 0%">0%</div>
+        <!-- Getting Started Guide (Collapsible) -->
+        <div style="margin-bottom: 30px;">
+            <div class="collapsible-header" onclick="toggleInstructions()" style="background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);">
+                <div>
+                    <div class="collapsible-title">
+                        🚀 New Here? Click for Quick Start Guide
+                    </div>
+                    <div class="click-hint">👆 First time using the app? Click to see instructions</div>
                 </div>
-                <div class="status-message" id="statusMessage"></div>
+                <div class="collapsible-icon" id="instructionsIcon">▼</div>
+            </div>
+
+            <div class="collapsible-content" id="instructionsContent">
+                <div style="background: white; padding: 20px; border-radius: 0 0 12px 12px; border: 2px solid #4caf50; border-top: none;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                        <div style="background: #f8f9ff; padding: 15px; border-radius: 8px; border-left: 3px solid #667eea;">
+                            <strong style="color: #667eea;">1️⃣ Search & Generate</strong>
+                            <p style="color: #666; font-size: 0.9rem; margin-top: 8px; line-height: 1.4;">
+                                Enter keywords → Use templates or custom instructions → Generate content
+                            </p>
+                        </div>
+
+                        <div style="background: #fff3e0; padding: 15px; border-radius: 8px; border-left: 3px solid #ff9800;">
+                            <strong style="color: #ff9800;">2️⃣ Add Documents</strong>
+                            <p style="color: #666; font-size: 0.9rem; margin-top: 8px; line-height: 1.4;">
+                                Click "Admin Access" to upload PDFs (optional)
+                            </p>
+                        </div>
+
+                        <div style="background: #e0f2f1; padding: 15px; border-radius: 8px; border-left: 3px solid #11998e;">
+                            <strong style="color: #11998e;">3️⃣ Browse Database</strong>
+                            <p style="color: #666; font-size: 0.9rem; margin-top: 8px; line-height: 1.4;">
+                                Expand "Database Overview" to see all documents
+                            </p>
+                        </div>
+                    </div>
+
+                    <div style="background: #e8f5e9; padding: 12px; border-radius: 8px; border-left: 3px solid #4caf50; font-size: 0.9rem;">
+                        <strong style="color: #4caf50;">💡 Tip:</strong> Use template buttons for quick prompts • Be specific with keywords • No hallucinations - only real data!
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="divider"></div>
-
-        <!-- Section 2: Search & Extract Quotes -->
+        <!-- Section 1: AI Content Generator -->
         <div class="card">
-            <div class="section-title">🔍 2. Search & Extract Quotes</div>
+            <div class="section-title">✨ 1. AI Content Generator</div>
 
             <div style="background: #e3f2fd; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #1976d2;">
-                <strong style="color: #1976d2;">💡 How it works:</strong> Enter keywords to search your knowledge base and extract relevant quotes with Claude AI.
+                <strong style="color: #1976d2;">💡 How it works:</strong> Enter keywords to find relevant content, then give custom instructions to Claude AI. Extract quotes, generate posts, summarize concepts, list key terms - anything you want!
+            </div>
+
+            <!-- Quick Prompt Templates -->
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: 600; color: #333; margin-bottom: 10px;">📋 Quick Templates (click to use)</label>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="template-btn" onclick="useTemplate('quotes')">📝 Extract Quotes</button>
+                    <button class="template-btn" onclick="useTemplate('post')">✍️ Generate Post</button>
+                    <button class="template-btn" onclick="useTemplate('summary')">📄 Summarize</button>
+                    <button class="template-btn" onclick="useTemplate('keywords')">🔑 Key Terms</button>
+                    <button class="template-btn" onclick="useTemplate('insights')">💡 Key Insights</button>
+                </div>
             </div>
 
             <div class="search-input-group">
-                <label for="keywordsInput">Keywords or Topic</label>
+                <label for="keywordsInput">🔍 Keywords or Topic (for semantic search)</label>
                 <input
                     type="text"
                     id="keywordsInput"
@@ -343,319 +595,227 @@
             </div>
 
             <div class="search-input-group">
-                <label for="numQuotesInput">Number of Quotes</label>
-                <select id="numQuotesInput" class="search-input">
-                    <option value="3">3 quotes</option>
-                    <option value="5" selected>5 quotes</option>
-                    <option value="7">7 quotes</option>
-                    <option value="10">10 quotes</option>
+                <label for="instructionsInput">🎯 Custom Instructions (tell Claude what to do)</label>
+                <textarea
+                    id="instructionsInput"
+                    class="search-input"
+                    rows="5"
+                    placeholder="e.g., Extract the 5 best quotes about this topic with author names...&#10;&#10;or: Write a LinkedIn post summarizing the key ideas...&#10;&#10;or: List 10 important terms and their definitions..."
+                    style="resize: vertical; font-family: inherit;"
+                ></textarea>
+            </div>
+
+            <div class="search-input-group">
+                <label for="numChunksInput">📊 Context Size (number of relevant passages to use)</label>
+                <select id="numChunksInput" class="search-input">
+                    <option value="5">5 passages (focused)</option>
+                    <option value="10" selected>10 passages (balanced)</option>
+                    <option value="15">15 passages (comprehensive)</option>
+                    <option value="20">20 passages (extensive)</option>
                 </select>
             </div>
 
             <button class="btn search-btn" id="searchBtn">
-                🔍 Search & Extract Quotes
+                ✨ Generate Content
             </button>
 
             <div class="quotes-result" id="quotesResult"></div>
         </div>
 
-        <!-- Stats Info -->
-        <div class="card" style="background: #f8f9ff; border: 2px solid #667eea;">
-            <div style="text-align: center;">
-                <h3 style="color: #667eea; margin-bottom: 15px;">📊 System Info</h3>
-                <div id="statsInfo">
-                    <span class="info-badge">Collection: pdf_documents</span>
-                    <span class="info-badge" id="vectorCount">Vectors: Loading...</span>
-                    <span class="info-badge">Model: text-embedding-3-small</span>
-                    <span class="info-badge">AI: Claude 3 Haiku</span>
+        <div class="divider"></div>
+
+        <!-- Admin Link -->
+        <div style="text-align: center; padding: 20px; background: #fff3e0; border-radius: 12px; border: 2px dashed #ff9800; margin-bottom: 30px;">
+            <div style="font-size: 1.1rem; color: #e65100; margin-bottom: 10px;">
+                <strong>🔐 Admin Access</strong>
+            </div>
+            <div style="color: #666; margin-bottom: 15px;">
+                Need to add new documents to the knowledge base?
+            </div>
+            <a href="/admin" style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(255, 152, 0, 0.3);">
+                📤 Click here to upload PDFs
+            </a>
+        </div>
+
+        <!-- Database Overview Section (Collapsible) -->
+        <div class="card">
+            <div class="collapsible-header" onclick="toggleDatabaseView()">
+                <div>
+                    <div class="collapsible-title">
+                        📚 2. Database Overview - All Documents
+                    </div>
+                    <div class="click-hint">👆 Click to expand and view all documents</div>
+                </div>
+                <div class="collapsible-icon" id="dbToggleIcon">▼</div>
+            </div>
+
+            <div class="collapsible-content" id="databaseContent">
+                <!-- Stats -->
+                <div id="dbStatsArea">
+                    <div style="text-align: center; padding: 20px; color: #666;">
+                        <span class="spinner"></span> Loading statistics...
+                    </div>
+                </div>
+
+                <!-- Documents List -->
+                <div id="dbDocumentsArea" style="margin-top: 20px;">
+                    <div style="text-align: center; padding: 20px; color: #666;">
+                        <span class="spinner"></span> Loading documents...
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Upload section variables
-        const uploadArea = document.getElementById('uploadArea');
-        const fileInput = document.getElementById('fileInput');
-        const selectedFile = document.getElementById('selectedFile');
-        const fileName = document.getElementById('fileName');
-        const convertBtn = document.getElementById('convertBtn');
-        const statusArea = document.getElementById('statusArea');
-        const statusMessage = document.getElementById('statusMessage');
-        const progressFill = document.getElementById('progressFill');
-
         // Search section variables
         const searchBtn = document.getElementById('searchBtn');
         const keywordsInput = document.getElementById('keywordsInput');
-        const numQuotesInput = document.getElementById('numQuotesInput');
+        const instructionsInput = document.getElementById('instructionsInput');
+        const numChunksInput = document.getElementById('numChunksInput');
         const quotesResult = document.getElementById('quotesResult');
 
-        let selectedPdfFile = null;
         let currentMarkdown = null;
 
-        // Load vector count on page load
-        loadVectorCount();
+        // Template presets
+        const templates = {
+            quotes: `Extract the 5 best quotes about this topic.
 
-        // Upload area events
-        uploadArea.addEventListener('click', () => fileInput.click());
+For each quote:
+- Include the exact quote text
+- Add the author name or source document
+- Keep quotes concise (1-3 sentences max)
 
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) handleFileSelect(file);
-        });
+Format as markdown with bullet points.`,
 
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.style.borderColor = '#764ba2';
-            uploadArea.style.background = '#e8ebff';
-        });
+            post: `Write a engaging LinkedIn post about this topic.
 
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.style.borderColor = '#667eea';
-            uploadArea.style.background = '#f8f9ff';
-        });
+Requirements:
+- Hook in the first line
+- 150-250 words total
+- Include 2-3 key insights from the content
+- End with a thought-provoking question
+- Use line breaks for readability
+- Professional but conversational tone`,
 
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.style.borderColor = '#667eea';
-            uploadArea.style.background = '#f8f9ff';
+            summary: `Summarize the key concepts about this topic.
 
-            const file = e.dataTransfer.files[0];
-            if (file && file.type === 'application/pdf') {
-                fileInput.files = e.dataTransfer.files;
-                handleFileSelect(file);
-            } else {
-                alert('Please select a PDF file');
-            }
-        });
+Create a structured summary with:
+- Main idea (2-3 sentences)
+- 3-5 key points with brief explanations
+- Important takeaways
+- Use clear headings and bullet points`,
 
-        function handleFileSelect(file) {
-            selectedPdfFile = file;
-            fileName.textContent = file.name + ' (' + formatFileSize(file.size) + ')';
-            selectedFile.classList.add('show');
-            convertBtn.style.display = 'block';
-            statusArea.classList.remove('show');
+            keywords: `Extract the 10 most important terms and concepts related to this topic.
+
+For each term:
+- The term itself
+- A concise 1-sentence definition
+- Why it's relevant
+
+Format as a numbered list.`,
+
+            insights: `Identify the 5 most valuable insights about this topic.
+
+For each insight:
+- State the insight clearly
+- Explain why it matters
+- Include supporting evidence from the content
+
+Make it actionable and practical.`
+        };
+
+        function useTemplate(type) {
+            instructionsInput.value = templates[type];
+            instructionsInput.focus();
         }
 
-        function formatFileSize(bytes) {
-            if (bytes < 1024) return bytes + ' B';
-            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
-            return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
-        }
-
-        // Convert & Auto-inject
-        convertBtn.addEventListener('click', async () => {
-            if (!selectedPdfFile) return;
-
-            convertBtn.disabled = true;
-            statusArea.classList.add('show');
-            updateProgress(10, 'Uploading PDF...');
-
-            const formData = new FormData();
-            formData.append('file', selectedPdfFile);
-
-            try {
-                const response = await fetch('/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    const jobId = data.job_id;
-                    updateProgress(30, 'Converting with pdfplumber...');
-                    pollStatus(jobId);
-                } else {
-                    showError(data.error || 'Upload error');
-                }
-            } catch (error) {
-                showError('Connection error: ' + error.message);
-            }
-        });
-
-        function pollStatus(jobId) {
-            const interval = setInterval(async () => {
-                try {
-                    const response = await fetch('/status/' + jobId);
-                    const data = await response.json();
-
-                    if (data.status === 'processing') {
-                        updateProgress(60, data.message);
-                    } else if (data.status === 'completed') {
-                        clearInterval(interval);
-                        updateProgress(70, 'Conversion completed! Starting auto-pipeline...');
-                        runAutoPipeline(jobId);
-                    } else if (data.status === 'error') {
-                        clearInterval(interval);
-                        showError(data.message);
-                    }
-                } catch (error) {
-                    clearInterval(interval);
-                    showError('Status check error');
-                }
-            }, 2000);
-        }
-
-        async function runAutoPipeline(jobId) {
-            try {
-                updateProgress(75, 'Chunking and generating embeddings...');
-
-                const response = await fetch('/auto-pipeline/' + jobId, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        chunk_size: 1000,
-                        chunk_overlap: 200,
-                        collection_name: 'pdf_documents'
-                    })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    updateProgress(100, 'Complete!');
-                    displaySuccess(data);
-                    loadVectorCount(); // Refresh vector count
-                } else {
-                    showError(data.error || 'Pipeline error');
-                }
-            } catch (error) {
-                showError('Error: ' + error.message);
-            }
-        }
-
-        function updateProgress(percent, message) {
-            progressFill.style.width = percent + '%';
-            progressFill.textContent = percent + '%';
-            statusMessage.innerHTML = '<span class="spinner"></span> ' + message;
-        }
-
-        function displaySuccess(data) {
-            const methodBadge = data.method === 'pdfplumber' ? '📄 pdfplumber' : '🚀 LlamaParse';
-            const methodColor = data.method === 'pdfplumber' ? '#2e7d32' : '#1976d2';
-
-            statusMessage.innerHTML = `
-                <div class="success" style="font-size: 1.2rem; font-weight: 700; padding: 25px;">
-                    ✅ Success! PDF processed and injected into knowledge base
-                    <div style="margin-top: 15px; font-size: 1rem;">
-                        <span style="background: ${methodColor}; color: white; padding: 6px 14px; border-radius: 12px; margin-right: 10px;">
-                            ${methodBadge}
-                        </span>
-                        <span style="background: #667eea; color: white; padding: 6px 14px; border-radius: 12px;">
-                            ${data.total_chunks} chunks
-                        </span>
-                        <span style="background: #11998e; color: white; padding: 6px 14px; border-radius: 12px; margin-left: 10px;">
-                            ${data.total_tokens} tokens
-                        </span>
-                    </div>
-                    <div style="margin-top: 15px; font-size: 0.95rem; color: #2e7d32;">
-                        📦 Total vectors in database: ${data.total_vectors_in_collection}
-                    </div>
-                </div>
-            `;
-            convertBtn.disabled = false;
-        }
-
-        function showError(message) {
-            statusMessage.innerHTML = `<div class="error">❌ ${message}</div>`;
-            convertBtn.disabled = false;
-        }
-
-        // Search & Extract Quotes
+        // Generate Content with Custom Instructions
         searchBtn.addEventListener('click', async () => {
             const keywords = keywordsInput.value.trim();
+            const instructions = instructionsInput.value.trim();
 
             if (!keywords) {
-                alert('Please enter keywords');
+                alert('Please enter keywords for semantic search');
+                return;
+            }
+
+            if (!instructions) {
+                alert('Please enter instructions (or use a template)');
                 return;
             }
 
             searchBtn.disabled = true;
-            searchBtn.textContent = '🔍 Searching...';
-            quotesResult.innerHTML = '<div style="text-align: center; padding: 20px;"><span class="spinner"></span> Searching knowledge base and extracting quotes...</div>';
+            searchBtn.textContent = '✨ Generating...';
+            quotesResult.innerHTML = '<div style="text-align: center; padding: 20px;"><span class="spinner"></span> Searching knowledge base and generating content...</div>';
             quotesResult.classList.add('show');
 
             try {
-                const response = await fetch('/extract-quotes', {
+                const response = await fetch('/generate-content', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
                         keywords: keywords,
+                        instructions: instructions,
                         collection_name: 'pdf_documents',
-                        top_k: parseInt(numQuotesInput.value)
+                        top_k: parseInt(numChunksInput.value)
                     })
                 });
 
                 const data = await response.json();
 
                 if (response.ok) {
-                    displayQuotes(data);
+                    displayContent(data);
                 } else {
-                    quotesResult.innerHTML = `<div class="error">❌ ${data.error || 'Search error'}</div>`;
+                    quotesResult.innerHTML = `<div class="error">❌ ${data.error || 'Generation error'}</div>`;
                 }
             } catch (error) {
                 quotesResult.innerHTML = `<div class="error">❌ Connection error: ${error.message}</div>`;
             } finally {
                 searchBtn.disabled = false;
-                searchBtn.textContent = '🔍 Search & Extract Quotes';
+                searchBtn.textContent = '✨ Generate Content';
             }
         });
 
-        function displayQuotes(data) {
-            if (!data.success || data.quotes_count === 0) {
-                quotesResult.innerHTML = '<div class="error">No quotes found. Try different keywords.</div>';
+        function displayContent(data) {
+            if (!data.success) {
+                quotesResult.innerHTML = '<div class="error">No content generated. Try different keywords or instructions.</div>';
                 return;
             }
 
-            // Parse markdown to extract quotes
-            const lines = data.markdown.split('\n');
-            let quotesHtml = `
+            // Display raw content in a nice box
+            const contentHtml = `
                 <div class="success" style="font-size: 1.1rem; font-weight: 600; margin-bottom: 20px;">
-                    ✅ Found ${data.quotes_count} relevant quote(s)
+                    ✅ Content generated successfully!
+                    <div style="font-size: 0.9rem; font-weight: 400; margin-top: 5px; opacity: 0.8;">
+                        Based on ${data.chunks_found} relevant passage(s)
+                    </div>
+                </div>
+
+                <div style="background: #f8f9ff; border-left: 4px solid #667eea; padding: 20px; border-radius: 10px; white-space: pre-wrap; font-size: 1rem; line-height: 1.6;">
+                    ${escapeHtml(data.content)}
                 </div>
             `;
 
-            let currentQuote = '';
-            let currentAuthor = '';
-
-            for (let line of lines) {
-                if (line.startsWith('> "')) {
-                    // Quote line
-                    currentQuote = line.substring(3, line.length - 1); // Remove > " and trailing "
-                } else if (line.startsWith('—')) {
-                    // Author line
-                    currentAuthor = line.substring(2).trim(); // Remove — and trim
-
-                    // Display the quote
-                    quotesHtml += `
-                        <div class="quote-item">
-                            <div class="quote-text">"${currentQuote}"</div>
-                            <div>
-                                <span class="quote-author">— ${currentAuthor}</span>
-                            </div>
-                        </div>
-                    `;
-                    currentQuote = '';
-                    currentAuthor = '';
-                }
-            }
-
-            quotesResult.innerHTML = quotesHtml;
+            quotesResult.innerHTML = contentHtml;
 
             // Add download button
             const downloadBtn = document.createElement('button');
             downloadBtn.className = 'btn download-quotes-btn';
-            downloadBtn.textContent = '📥 Download Quotes (Markdown)';
-            downloadBtn.onclick = () => downloadMarkdown(data.markdown, data.keywords);
+            downloadBtn.textContent = '📥 Download Content (Markdown)';
+            downloadBtn.onclick = () => downloadMarkdown(data.content, data.keywords);
             quotesResult.appendChild(downloadBtn);
 
-            // Store markdown for download
-            currentMarkdown = data.markdown;
+            // Store content for download
+            currentMarkdown = data.content;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         function downloadMarkdown(content, keywords) {
@@ -670,18 +830,163 @@
             URL.revokeObjectURL(url);
         }
 
-        async function loadVectorCount() {
+        // Instructions Section
+        let instructionsExpanded = false;
+
+        function toggleInstructions() {
+            const content = document.getElementById('instructionsContent');
+            const icon = document.getElementById('instructionsIcon');
+            const hint = document.querySelector('.click-hint');
+
+            instructionsExpanded = !instructionsExpanded;
+
+            if (instructionsExpanded) {
+                content.classList.add('expanded');
+                icon.classList.add('expanded');
+            } else {
+                content.classList.remove('expanded');
+                icon.classList.remove('expanded');
+            }
+        }
+
+        // Database Overview Section
+        let databaseViewExpanded = false;
+        let databaseDataLoaded = false;
+
+        function toggleDatabaseView() {
+            const content = document.getElementById('databaseContent');
+            const icon = document.getElementById('dbToggleIcon');
+            const hint = document.querySelector('.click-hint');
+
+            databaseViewExpanded = !databaseViewExpanded;
+
+            if (databaseViewExpanded) {
+                content.classList.add('expanded');
+                icon.classList.add('expanded');
+                hint.textContent = '👇 Click to collapse';
+
+                // Load data only once
+                if (!databaseDataLoaded) {
+                    loadDatabaseStats();
+                    loadDatabaseDocuments();
+                    databaseDataLoaded = true;
+                }
+            } else {
+                content.classList.remove('expanded');
+                icon.classList.remove('expanded');
+                hint.textContent = '👆 Click to expand and view all documents';
+            }
+        }
+
+        async function loadDatabaseStats() {
+            const statsArea = document.getElementById('dbStatsArea');
+
             try {
-                const response = await fetch('/qdrant/collections');
+                const response = await fetch('/api/database/stats');
                 const data = await response.json();
 
-                if (data.collections && data.collections.length > 0) {
-                    const collection = data.collections[0];
-                    document.getElementById('vectorCount').textContent = `Vectors: ${collection.vectors_count}`;
+                if (response.ok) {
+                    let statsHtml = '<div class="db-stats-grid">';
+
+                    statsHtml += `
+                        <div class="db-stat-card">
+                            <div class="db-stat-number">${data.total_vectors.toLocaleString()}</div>
+                            <div class="db-stat-label">Total Vectors</div>
+                        </div>
+                    `;
+
+                    statsHtml += `
+                        <div class="db-stat-card">
+                            <div class="db-stat-number">${data.collections.length}</div>
+                            <div class="db-stat-label">Collections</div>
+                        </div>
+                    `;
+
+                    if (data.collections.length > 0) {
+                        const mainCollection = data.collections.find(c => c.name === 'pdf_documents') || data.collections[0];
+                        statsHtml += `
+                            <div class="db-stat-card">
+                                <div class="db-stat-number">${mainCollection.vectors_count.toLocaleString()}</div>
+                                <div class="db-stat-label">PDF Chunks</div>
+                            </div>
+                        `;
+                    }
+
+                    statsHtml += '</div>';
+                    statsArea.innerHTML = statsHtml;
+                } else {
+                    statsArea.innerHTML = `<div class="error">❌ ${data.error || 'Loading error'}</div>`;
                 }
             } catch (error) {
-                console.error('Error loading vector count:', error);
+                statsArea.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
             }
+        }
+
+        async function loadDatabaseDocuments() {
+            const documentsArea = document.getElementById('dbDocumentsArea');
+
+            try {
+                const response = await fetch('/api/database/documents?collection_name=pdf_documents&limit=50');
+                const data = await response.json();
+
+                if (response.ok) {
+                    if (!data.documents || data.documents.length === 0) {
+                        documentsArea.innerHTML = `
+                            <div style="text-align: center; padding: 40px; color: #666;">
+                                <div style="font-size: 3rem; margin-bottom: 15px;">📭</div>
+                                <h3>No documents found</h3>
+                                <p>Start by uploading PDFs above</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    let html = `
+                        <div style="background: #e3f2fd; padding: 12px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+                            <strong style="color: #1976d2;">📊 ${data.total_documents} document(s) • ${data.total_chunks_in_collection.toLocaleString()} chunks total</strong>
+                        </div>
+                    `;
+
+                    data.documents.forEach((doc, index) => {
+                        const avgTokensPerChunk = Math.round(doc.total_tokens / doc.chunk_count);
+
+                        html += `
+                            <div class="document-item">
+                                <div class="document-name">📄 ${doc.filename}</div>
+                                <div class="document-stats">
+                                    <div class="doc-stat"><strong>${doc.chunk_count}</strong> chunks</div>
+                                    <div class="doc-stat"><strong>${doc.total_tokens.toLocaleString()}</strong> tokens</div>
+                                    <div class="doc-stat"><strong>${avgTokensPerChunk}</strong> tokens/chunk</div>
+                                    <div class="doc-stat"><strong>${(doc.total_chars / 1000).toFixed(1)}k</strong> characters</div>
+                                </div>
+                                <button class="chunks-toggle" onclick="toggleChunks('${index}')">
+                                    👁️ View chunks preview
+                                </button>
+                                <div class="chunks-preview" id="chunks-${index}">
+                                    ${doc.chunks.slice(0, 3).map(chunk => `
+                                        <div class="chunk-preview-item">
+                                            <div class="chunk-preview-header">Chunk #${chunk.chunk_id} (${chunk.token_count} tokens)</div>
+                                            <div>${chunk.text_preview}</div>
+                                        </div>
+                                    `).join('')}
+                                    ${doc.chunks.length > 3 ? `<div style="text-align: center; color: #666; margin-top: 8px; font-size: 0.85rem;">... and ${doc.chunks.length - 3} more chunks</div>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    documentsArea.innerHTML = html;
+                } else {
+                    documentsArea.innerHTML = `<div class="error">❌ ${data.error || 'Loading error'}</div>`;
+                }
+            } catch (error) {
+                documentsArea.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        function toggleChunks(index) {
+            const chunksDiv = document.getElementById(`chunks-${index}`);
+            chunksDiv.classList.toggle('show');
         }
     </script>
 </body>

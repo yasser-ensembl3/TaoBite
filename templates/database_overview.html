@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Overview - Tao of Founders</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .nav-links {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .nav-link {
+            display: inline-block;
+            padding: 12px 24px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 10px;
+            margin: 0 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .nav-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 1.2rem;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .document-list {
+            margin-top: 30px;
+        }
+
+        .document-item {
+            background: #f8f9ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .document-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateX(5px);
+        }
+
+        .document-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .document-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            flex: 1;
+        }
+
+        .document-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #667eea;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .document-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-title {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .chunks-preview {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .chunk-item {
+            padding: 10px;
+            background: #f8f9ff;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #666;
+            border-left: 2px solid #667eea;
+        }
+
+        .chunk-header {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .toggle-chunks {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-chunks:hover {
+            background: #764ba2;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(17, 153, 142, 0.3);
+        }
+
+        .collection-selector {
+            margin-bottom: 20px;
+        }
+
+        .collection-selector label {
+            font-weight: 600;
+            color: #333;
+            margin-right: 10px;
+        }
+
+        .collection-selector select {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Aperçu de la Base de Données</h1>
+            <p>Visualisation de tous les ouvrages et documents stockés</p>
+        </div>
+
+        <div class="nav-links">
+            <a href="/" class="nav-link">🏠 Accueil</a>
+            <a href="/draft-generator" class="nav-link">✍️ Draft Generator</a>
+            <a href="/quote-extractor" class="nav-link">💬 Quote Extractor</a>
+            <a href="/obsidian-converter" class="nav-link">📝 Obsidian Converter</a>
+        </div>
+
+        <!-- Statistics Card -->
+        <div class="card">
+            <div class="section-title">📊 Statistiques Globales</div>
+            <div id="statsArea">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Chargement des statistiques...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documents Card -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div class="section-title" style="margin: 0;">📖 Documents dans la Base</div>
+                <button class="refresh-btn" onclick="loadDocuments()">🔄 Actualiser</button>
+            </div>
+
+            <div class="collection-selector">
+                <label for="collectionSelect">Collection:</label>
+                <select id="collectionSelect" onchange="loadDocuments()">
+                    <option value="pdf_documents">pdf_documents</option>
+                </select>
+            </div>
+
+            <div id="documentsArea">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Chargement des documents...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load data on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadStats();
+            loadDocuments();
+        });
+
+        async function loadStats() {
+            const statsArea = document.getElementById('statsArea');
+
+            try {
+                const response = await fetch('/api/database/stats');
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayStats(data);
+                } else {
+                    statsArea.innerHTML = `<div class="error">❌ ${data.error || 'Erreur lors du chargement des statistiques'}</div>`;
+                }
+            } catch (error) {
+                statsArea.innerHTML = `<div class="error">❌ Erreur de connexion: ${error.message}</div>`;
+            }
+        }
+
+        function displayStats(data) {
+            const statsArea = document.getElementById('statsArea');
+
+            let statsHtml = '<div class="stats-grid">';
+
+            statsHtml += `
+                <div class="stat-card">
+                    <div class="stat-number">${data.total_vectors.toLocaleString()}</div>
+                    <div class="stat-label">Total Vecteurs</div>
+                </div>
+            `;
+
+            statsHtml += `
+                <div class="stat-card">
+                    <div class="stat-number">${data.collections.length}</div>
+                    <div class="stat-label">Collections</div>
+                </div>
+            `;
+
+            if (data.collections.length > 0) {
+                const mainCollection = data.collections.find(c => c.name === 'pdf_documents') || data.collections[0];
+                statsHtml += `
+                    <div class="stat-card">
+                        <div class="stat-number">${mainCollection.vectors_count.toLocaleString()}</div>
+                        <div class="stat-label">Chunks PDF</div>
+                    </div>
+                `;
+            }
+
+            statsHtml += '</div>';
+
+            // Add collections list
+            if (data.collections.length > 0) {
+                statsHtml += '<div style="margin-top: 20px;"><strong>Collections disponibles:</strong><br>';
+                data.collections.forEach(col => {
+                    statsHtml += `
+                        <span class="document-badge" style="margin: 5px;">
+                            ${col.name}: ${col.vectors_count.toLocaleString()} vecteurs
+                        </span>
+                    `;
+                });
+                statsHtml += '</div>';
+            }
+
+            statsArea.innerHTML = statsHtml;
+        }
+
+        async function loadDocuments() {
+            const documentsArea = document.getElementById('documentsArea');
+            const collectionName = document.getElementById('collectionSelect').value;
+
+            documentsArea.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Chargement des documents...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch(`/api/database/documents?collection_name=${collectionName}&limit=200`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayDocuments(data);
+                } else {
+                    documentsArea.innerHTML = `<div class="error">❌ ${data.error || 'Erreur lors du chargement des documents'}</div>`;
+                }
+            } catch (error) {
+                documentsArea.innerHTML = `<div class="error">❌ Erreur de connexion: ${error.message}</div>`;
+            }
+        }
+
+        function displayDocuments(data) {
+            const documentsArea = document.getElementById('documentsArea');
+
+            if (!data.documents || data.documents.length === 0) {
+                documentsArea.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <h3>Aucun document trouvé</h3>
+                        <p>Commencez par uploader des PDFs sur la page d'accueil</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <div style="background: #e3f2fd; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                    <strong style="color: #1976d2;">📊 Résumé:</strong>
+                    ${data.total_documents} document(s) unique(s),
+                    ${data.total_chunks_in_collection.toLocaleString()} chunks total
+                </div>
+                <div class="document-list">
+            `;
+
+            data.documents.forEach((doc, index) => {
+                html += `
+                    <div class="document-item">
+                        <div class="document-header">
+                            <div class="document-name">📄 ${doc.filename}</div>
+                            <span class="document-badge">${doc.chunk_count} chunks</span>
+                            <span class="document-badge" style="background: #11998e;">${doc.source}</span>
+                        </div>
+
+                        <div class="document-stats">
+                            <div class="stat-item">
+                                <div class="stat-value">${doc.chunk_count}</div>
+                                <div class="stat-title">Chunks</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${doc.total_tokens.toLocaleString()}</div>
+                                <div class="stat-title">Tokens</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${(doc.total_chars / 1000).toFixed(1)}k</div>
+                                <div class="stat-title">Caractères</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${Math.round(doc.total_tokens / doc.chunk_count)}</div>
+                                <div class="stat-title">Tokens/Chunk</div>
+                            </div>
+                        </div>
+
+                        <button class="toggle-chunks" onclick="toggleChunks('${index}')">
+                            👁️ Voir les chunks
+                        </button>
+
+                        <div id="chunks-${index}" class="chunks-preview" style="display: none;">
+                            <strong style="color: #667eea;">Aperçu des premiers chunks:</strong>
+                            ${doc.chunks.slice(0, 5).map(chunk => `
+                                <div class="chunk-item">
+                                    <div class="chunk-header">Chunk #${chunk.chunk_id} (${chunk.token_count} tokens)</div>
+                                    <div>${chunk.text_preview}</div>
+                                </div>
+                            `).join('')}
+                            ${doc.chunks.length > 5 ? `<div style="text-align: center; color: #666; margin-top: 10px;">... et ${doc.chunks.length - 5} autres chunks</div>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+
+            if (data.has_more) {
+                html += `
+                    <div style="text-align: center; margin-top: 20px; color: #666;">
+                        <p>Plus de documents disponibles (affichage des ${data.limit} premiers)</p>
+                    </div>
+                `;
+            }
+
+            documentsArea.innerHTML = html;
+        }
+
+        function toggleChunks(index) {
+            const chunksDiv = document.getElementById(`chunks-${index}`);
+            if (chunksDiv.style.display === 'none') {
+                chunksDiv.style.display = 'block';
+            } else {
+                chunksDiv.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

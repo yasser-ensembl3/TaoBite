@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Upload Documents | Tao of Founders</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .back-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 60px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9ff;
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .upload-text {
+            font-size: 1.2rem;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .selected-file {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f5e9;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .selected-file.show {
+            display: block;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            width: 100%;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .status {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .status.show {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .status-message {
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            color: #666;
+        }
+
+        .success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #1976d2;
+        }
+
+        .info-box h3 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+            color: #555;
+        }
+
+        .info-box li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Back to Home</a>
+
+        <div class="header">
+            <h1>🔐 Admin Panel</h1>
+            <p>Upload and Process PDF Documents</p>
+        </div>
+
+        <div class="card">
+            <div class="section-title">📤 Upload & Process PDF</div>
+
+            <div class="info-box">
+                <h3>ℹ️ How it works</h3>
+                <ul>
+                    <li>Upload a PDF document</li>
+                    <li>Text is extracted using pdfplumber (with LlamaParse fallback)</li>
+                    <li>Content is automatically chunked into smaller pieces</li>
+                    <li>Embeddings are generated using OpenAI</li>
+                    <li>Document is added to the searchable knowledge base</li>
+                </ul>
+            </div>
+
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Click or drag & drop your PDF here</div>
+                <div style="font-size: 0.9rem; color: #666;">pdfplumber (free, local) with LlamaParse fallback</div>
+                <input type="file" id="fileInput" accept=".pdf">
+            </div>
+
+            <div class="selected-file" id="selectedFile">
+                <strong>Selected file:</strong>
+                <div id="fileName" style="margin-top: 5px; word-break: break-all;"></div>
+            </div>
+
+            <button class="btn" id="convertBtn" style="display: none;">
+                🔄 Convert & Inject into Knowledge Base
+            </button>
+
+            <div class="status" id="statusArea">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%">0%</div>
+                </div>
+                <div class="status-message" id="statusMessage"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Upload section variables
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const selectedFile = document.getElementById('selectedFile');
+        const fileName = document.getElementById('fileName');
+        const convertBtn = document.getElementById('convertBtn');
+        const statusArea = document.getElementById('statusArea');
+        const statusMessage = document.getElementById('statusMessage');
+        const progressFill = document.getElementById('progressFill');
+
+        let selectedPdfFile = null;
+
+        // Upload area events
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) handleFileSelect(file);
+        });
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#764ba2';
+            uploadArea.style.background = '#e8ebff';
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = '#667eea';
+            uploadArea.style.background = '#f8f9ff';
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#667eea';
+            uploadArea.style.background = '#f8f9ff';
+
+            const file = e.dataTransfer.files[0];
+            if (file && file.type === 'application/pdf') {
+                fileInput.files = e.dataTransfer.files;
+                handleFileSelect(file);
+            } else {
+                alert('Please select a PDF file');
+            }
+        });
+
+        function handleFileSelect(file) {
+            selectedPdfFile = file;
+            fileName.textContent = file.name + ' (' + formatFileSize(file.size) + ')';
+            selectedFile.classList.add('show');
+            convertBtn.style.display = 'block';
+            statusArea.classList.remove('show');
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+        }
+
+        // Convert & Auto-inject
+        convertBtn.addEventListener('click', async () => {
+            if (!selectedPdfFile) return;
+
+            convertBtn.disabled = true;
+            statusArea.classList.add('show');
+            updateProgress(10, 'Uploading PDF...');
+
+            const formData = new FormData();
+            formData.append('file', selectedPdfFile);
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    const jobId = data.job_id;
+                    updateProgress(30, 'Converting with pdfplumber...');
+                    pollStatus(jobId);
+                } else {
+                    showError(data.error || 'Upload error');
+                }
+            } catch (error) {
+                showError('Connection error: ' + error.message);
+            }
+        });
+
+        function pollStatus(jobId) {
+            const interval = setInterval(async () => {
+                try {
+                    const response = await fetch('/status/' + jobId);
+                    const data = await response.json();
+
+                    if (data.status === 'processing') {
+                        updateProgress(60, data.message);
+                    } else if (data.status === 'completed') {
+                        clearInterval(interval);
+                        updateProgress(70, 'Conversion completed! Starting auto-pipeline...');
+                        runAutoPipeline(jobId);
+                    } else if (data.status === 'error') {
+                        clearInterval(interval);
+                        showError(data.message);
+                    }
+                } catch (error) {
+                    clearInterval(interval);
+                    showError('Status check error');
+                }
+            }, 2000);
+        }
+
+        async function runAutoPipeline(jobId) {
+            try {
+                updateProgress(75, 'Chunking and generating embeddings...');
+
+                const response = await fetch('/auto-pipeline/' + jobId, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        chunk_size: 1000,
+                        chunk_overlap: 200,
+                        collection_name: 'pdf_documents'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    updateProgress(100, 'Complete!');
+                    displaySuccess(data);
+                } else {
+                    showError(data.error || 'Pipeline error');
+                }
+            } catch (error) {
+                showError('Error: ' + error.message);
+            }
+        }
+
+        function updateProgress(percent, message) {
+            progressFill.style.width = percent + '%';
+            progressFill.textContent = percent + '%';
+            statusMessage.innerHTML = '<span class="spinner"></span> ' + message;
+        }
+
+        function displaySuccess(data) {
+            const methodBadge = data.method === 'pdfplumber' ? '📄 pdfplumber' : '🚀 LlamaParse';
+            const methodColor = data.method === 'pdfplumber' ? '#2e7d32' : '#1976d2';
+
+            statusMessage.innerHTML = `
+                <div class="success" style="font-size: 1.2rem; font-weight: 700; padding: 25px;">
+                    ✅ Success! PDF processed and injected into knowledge base
+                    <div style="margin-top: 15px; font-size: 1rem;">
+                        <span style="background: ${methodColor}; color: white; padding: 6px 14px; border-radius: 12px; margin-right: 10px;">
+                            ${methodBadge}
+                        </span>
+                        <span style="background: #667eea; color: white; padding: 6px 14px; border-radius: 12px;">
+                            ${data.total_chunks} chunks
+                        </span>
+                        <span style="background: #11998e; color: white; padding: 6px 14px; border-radius: 12px; margin-left: 10px;">
+                            ${data.total_tokens} tokens
+                        </span>
+                    </div>
+                    <div style="margin-top: 15px; font-size: 0.95rem; color: #2e7d32;">
+                        📦 Total vectors in database: ${data.total_vectors_in_collection}
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <a href="/" style="display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                            ← Back to Home
+                        </a>
+                    </div>
+                </div>
+            `;
+            convertBtn.disabled = false;
+        }
+
+        function showError(message) {
+            statusMessage.innerHTML = `<div class="error">❌ ${message}</div>`;
+            convertBtn.disabled = false;
+        }
+    </script>
+</body>
+</html>

@@ -320,6 +320,12 @@ def index():
     return render_template('index.html', models_loaded=True)
 
 
+@app.route('/admin')
+def admin():
+    """Admin page for uploading documents."""
+    return render_template('admin.html')
+
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     """Gérer l'upload du fichier PDF."""
@@ -808,6 +814,190 @@ def quote_extractor():
     return render_template('quote_extractor.html')
 
 
+@app.route('/generate-content', methods=['POST'])
+def generate_content():
+    """
+    Generate content based on custom instructions using Claude AI.
+    Uses relevance filtering to prevent hallucination.
+
+    Body JSON:
+    {
+        "keywords": "decision-making, founder psychology",
+        "instructions": "Extract the 5 best quotes...",
+        "collection_name": "pdf_documents",
+        "top_k": 10,
+        "min_score": 0.3  # optionnel, seuil minimum de pertinence
+    }
+    """
+    try:
+        data = request.get_json()
+        keywords = data.get('keywords', '')
+        instructions = data.get('instructions', '')
+        collection_name = data.get('collection_name', 'pdf_documents')
+        top_k = data.get('top_k', 10)
+        min_score = data.get('min_score', 0.3)  # Seuil de pertinence minimum
+
+        if not keywords:
+            return jsonify({'error': 'Keywords required'}), 400
+
+        if not instructions:
+            return jsonify({'error': 'Instructions required'}), 400
+
+        print(f"🔍 Generating content for: '{keywords}'")
+        print(f"📝 Instructions: {instructions[:100]}...")
+        print(f"🎯 Min relevance score: {min_score}")
+
+        # Step 1: Semantic search in Qdrant
+        embedding = get_openai_embeddings([keywords])[0]
+        client = get_qdrant_client()
+
+        results = client.search(
+            collection_name=collection_name,
+            query_vector=embedding,
+            limit=top_k,
+            with_payload=True,
+            score_threshold=min_score  # Filtre Qdrant: rejette les résultats < min_score
+        )
+
+        if not results:
+            return jsonify({
+                'error': 'No relevant content found in the database',
+                'message': f'No passages found with relevance score above {min_score:.0%}. Try different keywords or lower the threshold.'
+            }), 404
+
+        # Step 2: Prepare context for Claude with relevance scores
+        context_chunks = []
+        for hit in results:
+            context_chunks.append({
+                'text': hit.payload.get('text', ''),
+                'score': hit.score,
+                'filename': hit.payload.get('filename', 'unknown'),
+                'chunk_id': hit.payload.get('chunk_id', 0)
+            })
+
+        # Calculate average relevance score
+        avg_score = sum(chunk['score'] for chunk in context_chunks) / len(context_chunks)
+        max_score = context_chunks[0]['score']
+
+        print(f"📚 Found {len(context_chunks)} relevant chunks (avg score: {avg_score:.2%}, max: {max_score:.2%})")
+
+        # Build context text with relevance scores visible to Claude
+        context_text = "\n\n---\n\n".join([
+            f"[Source: {chunk['filename']}, Chunk #{chunk['chunk_id']}, Relevance Score: {chunk['score']:.2%}]\n{chunk['text']}"
+            for chunk in context_chunks
+        ])
+
+        # Step 3: Call Claude with STRICT anti-hallucination instructions
+        prompt = f"""You are an AI assistant helping to extract and generate content from a knowledge base.
+
+TOPIC/KEYWORDS: {keywords}
+
+RELEVANT CONTENT FROM KNOWLEDGE BASE:
+{context_text}
+
+USER INSTRUCTIONS:
+{instructions}
+
+CRITICAL RULES - YOU MUST FOLLOW THESE:
+1. ONLY use information from the passages above
+2. DO NOT invent, create, or fabricate any content
+3. READ THE ACTUAL CONTENT first before deciding if it's relevant - don't just look at relevance scores
+4. ONLY refuse if you actually read the passages and there are NO substantive quotes/content about the topic
+5. If relevance scores are above 40%, the content is likely relevant enough - just read it and extract what's valuable
+6. Quality over quantity: If the user asks for 5 quotes but only 2 are truly relevant, provide only 2
+7. Never make up quotes, statistics, or facts that aren't explicitly in the source material
+8. Use this refusal response ONLY if you truly cannot find ANY relevant substantive content after reading:
+   "NOT_ENOUGH_RELEVANT_DATA: After reading all passages, I could not find substantive quotes/content about '{keywords}' that meet quality standards."
+
+SPECIAL RULES FOR QUOTE EXTRACTION (if user asks for quotes):
+⚠️ CRITICAL: COPY QUOTES EXACTLY AS WRITTEN - DO NOT PARAPHRASE, REFORMULATE, OR MODIFY ANYTHING
+- Extract quotes WORD-FOR-WORD from the passages above
+- DO NOT change any words, even to make them "sound better"
+- DO NOT summarize or shorten quotes - copy them exactly
+- DO NOT add your own words or explanations to quotes
+- If you must cut a quote for length, use [...] to show removed parts, but what you include must be EXACT
+- Include citations/references if they appear in the original quote (e.g., "Smith, 2020")
+
+WHAT TO EXTRACT:
+- DO NOT extract section titles, headers, or chapter names
+- DO NOT extract questions without their answers
+- DO NOT extract incomplete sentences or sentence fragments
+- DO NOT extract survey/questionnaire items (e.g., "Item 1:", "Q3:", "Scale 2:", etc.)
+- DO NOT extract measurement scales or rating items
+- A good quote must be SUBSTANTIVE: it should convey a complete idea, insight, or argument
+- A good quote should be at least 10-15 words long (unless it's a truly powerful short statement)
+- Prefer quotes that contain explanations, arguments, insights, or actionable advice
+- Academic definitions are OK if they are complete and substantive (15+ words with explanation)
+- Avoid quotes that are just lists or statements without depth
+- Each quote should stand alone and make sense without additional context
+- Prioritize quotes with intellectual or practical value
+- DO NOT use the examples below - they are just FORMAT illustrations, not real quotes to extract
+
+WHAT TO AVOID (format examples only - DO NOT copy these):
+- Avoid: Titles like "Introduction", "The Problem", "Chapter 3"
+- Avoid: Questions without answers like "What is leadership?"
+- Avoid: Transition words like "In conclusion", "Furthermore"
+
+WHAT A GOOD QUOTE LOOKS LIKE (format examples only - extract from the actual passages above):
+- Good format: Complete sentences with insights and explanations (15+ words)
+- Good format: Statements that convey wisdom, research findings, or actionable advice
+- Good format: Quotes that would be valuable to read even without knowing the context
+
+IMPORTANT: Extract quotes ONLY from the passages provided above. Do NOT use or copy the format examples.
+
+DECISION PROCESS:
+1. READ all the passages carefully
+2. Look for substantive quotes/content that match the topic
+3. If you find at least 1-2 good quotes, extract them (even if fewer than requested)
+4. ONLY refuse if you truly find NOTHING relevant after reading all passages
+5. Don't refuse just because of relevance scores - read the actual content first!"""
+
+        message = claude_client.messages.create(
+            model="claude-3-haiku-20240307",
+            max_tokens=2000,
+            messages=[
+                {"role": "user", "content": prompt}
+            ]
+        )
+
+        generated_content = message.content[0].text.strip()
+
+        # Step 4: Check if Claude refused due to low relevance
+        if generated_content.startswith("NOT_ENOUGH_RELEVANT_DATA"):
+            print(f"⚠️  Claude refused - insufficient relevant data")
+            return jsonify({
+                'success': False,
+                'error': 'Insufficient relevant data',
+                'message': generated_content.replace("NOT_ENOUGH_RELEVANT_DATA: ", ""),
+                'chunks_found': len(context_chunks),
+                'avg_relevance': avg_score,
+                'max_relevance': max_score,
+                'sources': [{'filename': c['filename'], 'score': c['score']} for c in context_chunks]
+            }), 422  # 422 Unprocessable Entity
+
+        print(f"✅ Content generated ({len(generated_content)} characters)")
+
+        return jsonify({
+            'success': True,
+            'keywords': keywords,
+            'chunks_found': len(context_chunks),
+            'avg_relevance': avg_score,
+            'max_relevance': max_score,
+            'sources': [{'filename': c['filename'], 'score': c['score']} for c in context_chunks],
+            'source_chunks': context_chunks,  # Full chunks for verification
+            'content': generated_content,
+            'usage': {
+                'input_tokens': message.usage.input_tokens,
+                'output_tokens': message.usage.output_tokens
+            }
+        })
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+
 @app.route('/extract-quotes', methods=['POST'])
 def extract_quotes():
     """
@@ -1063,6 +1253,128 @@ def obsidian_download(job_id):
         as_attachment=True,
         download_name=Path(md_path).name
     )
+
+
+@app.route('/database-overview')
+def database_overview():
+    """Page d'aperçu de la base de données."""
+    return render_template('database_overview.html')
+
+
+@app.route('/api/database/documents')
+def get_all_documents():
+    """
+    Récupérer tous les documents de la base de données avec leurs métadonnées.
+
+    Query params:
+    - collection_name: nom de la collection (défaut: pdf_documents)
+    - limit: nombre de documents à retourner (défaut: 100)
+    - offset: décalage pour la pagination (défaut: 0)
+    """
+    try:
+        collection_name = request.args.get('collection_name', 'pdf_documents')
+        limit = int(request.args.get('limit', 100))
+        offset = int(request.args.get('offset', 0))
+
+        client = get_qdrant_client()
+
+        # Vérifier si la collection existe
+        try:
+            collection_info = client.get_collection(collection_name)
+            total_count = collection_info.points_count
+        except Exception:
+            return jsonify({
+                'error': f'Collection "{collection_name}" not found',
+                'documents': [],
+                'total': 0
+            }), 404
+
+        # Récupérer les documents avec scroll (pagination efficace)
+        points, next_offset = client.scroll(
+            collection_name=collection_name,
+            limit=limit,
+            offset=offset,
+            with_payload=True,
+            with_vectors=False  # Pas besoin des vecteurs pour l'aperçu
+        )
+
+        # Organiser les documents par fichier
+        documents_by_file = {}
+        for point in points:
+            filename = point.payload.get('filename', 'Unknown')
+            if filename not in documents_by_file:
+                documents_by_file[filename] = {
+                    'filename': filename,
+                    'chunks': [],
+                    'total_tokens': 0,
+                    'total_chars': 0,
+                    'chunk_count': 0,
+                    'job_id': point.payload.get('job_id'),
+                    'source': point.payload.get('source', 'unknown')
+                }
+
+            documents_by_file[filename]['chunks'].append({
+                'id': point.id,
+                'chunk_id': point.payload.get('chunk_id'),
+                'text_preview': point.payload.get('text', '')[:200] + '...' if len(point.payload.get('text', '')) > 200 else point.payload.get('text', ''),
+                'token_count': point.payload.get('token_count', 0),
+                'char_count': point.payload.get('char_count', 0)
+            })
+
+            documents_by_file[filename]['total_tokens'] += point.payload.get('token_count', 0)
+            documents_by_file[filename]['total_chars'] += point.payload.get('char_count', 0)
+            documents_by_file[filename]['chunk_count'] += 1
+
+        # Convertir en liste
+        documents = list(documents_by_file.values())
+
+        # Trier par nombre de chunks (documents les plus importants en premier)
+        documents.sort(key=lambda x: x['chunk_count'], reverse=True)
+
+        return jsonify({
+            'collection_name': collection_name,
+            'documents': documents,
+            'total_documents': len(documents),
+            'total_chunks': len(points),
+            'total_chunks_in_collection': total_count,
+            'limit': limit,
+            'offset': offset,
+            'has_more': next_offset is not None
+        })
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/database/stats')
+def get_database_stats():
+    """Obtenir les statistiques globales de la base de données."""
+    try:
+        client = get_qdrant_client()
+        collections = client.get_collections().collections
+
+        stats = {
+            'collections': [],
+            'total_vectors': 0
+        }
+
+        for col in collections:
+            info = client.get_collection(col.name)
+            stats['collections'].append({
+                'name': col.name,
+                'vectors_count': info.points_count,
+                'vector_size': info.config.params.vectors.size if hasattr(info.config.params, 'vectors') else 0
+            })
+            stats['total_vectors'] += info.points_count
+
+        return jsonify(stats)
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
 
 
 if __name__ == '__main__':
