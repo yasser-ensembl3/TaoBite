@@ -2,11 +2,28 @@
 
 ## Overview
 
-A comprehensive PDF processing and knowledge extraction system that converts PDFs to Markdown, creates vector embeddings, and extracts meaningful quotes using AI. Built specifically for curating insights from founder psychology, decision-making, and entrepreneurship literature.
+A powerful PDF-based knowledge management system with flexible AI content generation. Upload PDFs, build vector embeddings, and generate custom content (quotes, posts, summaries, insights) using Claude AI with strict anti-hallucination controls. Built specifically for curating insights from founder psychology, decision-making, and entrepreneurship literature.
 
 ## Core Features
 
-### 1. PDF to Markdown Conversion
+### 1. Flexible AI Content Generator
+- **Custom Instructions**: Tell Claude exactly what you want - any output format, any use case
+- **Quick Templates**: One-click presets for common needs:
+  - Quotes: Extract best quotes with strict word-for-word extraction
+  - LinkedIn Post: Generate 200-word professional posts
+  - Summary: Create comprehensive overviews
+  - Key Terms: Extract and define important concepts
+  - Insights: Generate actionable takeaways
+- **Context Control**: Adjustable passage count (5-20) for semantic search
+- **Anti-Hallucination System**:
+  - Relevance filtering with minimum 30% threshold
+  - Word-for-word extraction (no paraphrasing)
+  - No section titles or questionnaire items
+  - Quality over quantity (substantive content only)
+  - Full source chunks returned for verification
+- **Source Transparency**: Every response includes relevance scores and source passages
+
+### 2. PDF to Markdown Conversion
 - **Primary Method**: pdfplumber (local, free, fast)
 - **Fallback**: LlamaParse Cloud API (for scanned PDFs or failures)
 - **Strategy**: Try pdfplumber first, automatically fall back to LlamaParse if needed
@@ -17,7 +34,7 @@ A comprehensive PDF processing and knowledge extraction system that converts PDF
 - **Output**: Clean Markdown format with page markers
 - **Tracking**: Records which method was used for each conversion
 
-### 2. Intelligent Text Chunking
+### 3. Intelligent Text Chunking
 - **Library**: LangChain RecursiveCharacterTextSplitter
 - **Token Counting**: tiktoken (cl100k_base encoding)
 - **Default Settings**:
@@ -31,34 +48,37 @@ A comprehensive PDF processing and knowledge extraction system that converts PDF
   - char_count
   - preview (first 100 chars)
 
-### 3. Vector Embeddings
+### 4. Vector Embeddings
 - **Model**: OpenAI text-embedding-3-small
 - **Dimensions**: 1536
 - **Batch Processing**: 100 texts per batch (OpenAI limit: 2048)
 - **Use Case**: Semantic search and similarity matching
 
-### 4. Vector Database
-- **Database**: Qdrant (local storage)
+### 5. Vector Database
+- **Database**: Qdrant Cloud (with local fallback)
 - **Collection**: `pdf_documents` (single unified collection)
 - **Distance Metric**: Cosine similarity
-- **Storage Path**: `./qdrant_storage/`
+- **Deployment**:
+  - **Production**: Qdrant Cloud (https://cloud.qdrant.io/)
+  - **Development**: Local storage (`./qdrant_storage/`)
+  - **Migration Tool**: `migrate_to_qdrant_cloud.py`
 - **Features**:
-  - Persistent local storage
+  - Persistent cloud storage (production)
   - Fast similarity search
   - Metadata filtering support
+  - Automatic local/cloud detection via environment variables
 
-### 5. Quote Extraction with AI
-- **Model**: Claude 3 Haiku (Anthropic)
-- **Format**: JSON-structured responses
-- **Output**:
-  - Exact quotes (1-3 sentences)
-  - Author attribution or source filename
-  - Relevance percentage scores
-  - Markdown download format
-- **No Translation**: Returns quotes in original language
-- **No Reformulation**: Extracts pure citations
+### 6. Database Overview & Administration
+- **Separate Admin Page**: `/admin` for document uploads
+- **Database Viewer**: Browse all stored documents with statistics
+- **Document Stats**:
+  - Chunk counts per document
+  - Token statistics
+  - Source information
+  - Preview of content chunks
+- **Real-time Updates**: Auto-refresh after uploads
 
-### 6. Semantic Search
+### 7. Semantic Search
 - **Process**:
   1. User query → OpenAI embedding
   2. Qdrant searches for top-k similar vectors
@@ -149,7 +169,32 @@ One-click: Chunk + Embed + Inject.
 - **Input JSON**: Same as /inject
 - **Returns**: Complete statistics
 
-### Search & Extraction
+### Content Generation & Search
+
+#### `POST /generate-content`
+**Primary endpoint** - Generate custom AI content with flexible instructions.
+- **Input JSON**:
+  ```json
+  {
+    "keywords": "resilience, decision-making",
+    "instructions": "Extract the 5 best quotes about leadership",
+    "collection_name": "pdf_documents",
+    "top_k": 10
+  }
+  ```
+- **Process**:
+  1. Semantic search for relevant chunks (top_k passages)
+  2. Filter by relevance threshold (min 30%)
+  3. Claude generates content following custom instructions
+  4. Returns content with source verification
+- **Returns**:
+  - Generated content (quotes, posts, summaries, etc.)
+  - Source chunks with relevance scores
+  - Full transparency for anti-hallucination
+- **Anti-Hallucination**:
+  - Strict word-for-word extraction rules
+  - Quality filters (no headers, no surveys)
+  - Substantive content only (15+ words)
 
 #### `POST /qdrant/search`
 Semantic search in vector database.
@@ -164,27 +209,34 @@ Semantic search in vector database.
 - **Returns**: Top matching chunks with scores
 
 #### `POST /extract-quotes`
-Extract relevant quotes from knowledge base.
-- **Input JSON**:
-  ```json
-  {
-    "keywords": "decision-making, psychology",
-    "collection_name": "pdf_documents",
-    "top_k": 10
-  }
-  ```
-- **Process**:
-  1. Semantic search for relevant chunks
-  2. Claude extracts 3-5 best quotes
-  3. Formats with author and relevance %
-- **Returns**: Markdown-formatted quotes
+**Legacy endpoint** - Extract quotes (now superseded by /generate-content).
+- Kept for backward compatibility
+- Recommend using /generate-content with "Extract quotes" instructions
 
 #### `POST /generate-draft`
-Generate Substack draft notes (legacy feature).
-- **Input JSON**: Same as /extract-quotes
-- **Returns**: Longer formatted draft with commentary
+**Legacy endpoint** - Generate Substack drafts.
+- Kept for backward compatibility
+- Recommend using /generate-content with custom instructions
 
 ### Utility Endpoints
+
+#### `GET /api/database/stats`
+Get global database statistics.
+- **Returns**:
+  - Total vectors across all collections
+  - List of all collections with vector counts
+  - Database health metrics
+
+#### `GET /api/database/documents`
+List all documents in a collection.
+- **Query Parameters**:
+  - `collection_name` (default: "pdf_documents")
+  - `limit` (default: 100)
+- **Returns**:
+  - Document metadata (filename, source, chunk count)
+  - Token and character statistics
+  - Preview of chunks
+  - Total counts and summaries
 
 #### `GET /qdrant/collections`
 List all Qdrant collections.
@@ -199,48 +251,91 @@ Check if services are ready.
 ### Main Page (`/`)
 **Template**: `templates/index.html`
 
-**Features**:
-- PDF upload form
-- Conversion progress tracking
-- Download converted Markdown
-- "Auto Pipeline" button (one-click embedding)
+**Unified Interface** with three collapsible sections:
+
+1. **AI Content Generator** (default open)
+   - Keyword input field
+   - Custom instructions textarea
+   - Quick template buttons (Quotes, Post, Summary, Keywords, Insights)
+   - Context size slider (5-20 passages)
+   - Generate button
+   - Output display with source chunks and relevance scores
+   - Markdown download button
+   - Built-in usage guide
+
+2. **Database Overview** (collapsible)
+   - Global statistics (total vectors, collections)
+   - Document list with metadata
+   - Chunk previews per document
+   - Token and character counts
+   - Real-time stats updates
+
+3. **Admin Access** (button link)
+   - Links to `/admin` page
+   - Separated to keep main interface clean
 
 **Workflow**:
-1. Upload PDF
-2. Click "Convert to Markdown"
-3. Wait for completion
-4. Download Markdown OR
-5. Click "Auto Pipeline" to embed into knowledge base
+1. Enter keywords (e.g., "resilience, leadership")
+2. Choose template OR write custom instructions
+3. Adjust context size (how many passages to use)
+4. Click "Generate Content"
+5. Review output with source verification
+6. Download as Markdown if needed
 
-### Quote Extractor (`/quote-extractor`)
+### Admin Page (`/admin`)
+**Template**: `templates/admin.html`
+
+**Dedicated upload interface**:
+- Drag & drop PDF upload
+- Automatic processing pipeline
+- Progress tracking with visual feedback
+- Success metrics (chunks, tokens, extraction method)
+- Link back to main interface
+
+**Auto-Pipeline Process**:
+1. PDF upload
+2. Text extraction (pdfplumber → LlamaParse fallback)
+3. Automatic chunking
+4. Embedding generation
+5. Vector database injection
+6. Completion summary
+
+### Legacy Pages (Backward Compatibility)
+
+#### Quote Extractor (`/quote-extractor`)
 **Template**: `templates/quote_extractor.html`
+- Original quote extraction interface
+- Kept for users familiar with old workflow
+- Recommend migrating to main page AI Content Generator
 
-**Features**:
-- Keyword input
-- Number of quotes selector (3-10)
-- Real-time quote extraction
-- Markdown download button
-- Relevance scores display
+#### Draft Generator (`/draft-generator`)
+**Template**: `templates/draft_generator.html`
+- Substack draft generation
+- Kept for backward compatibility
 
-**Output Format**:
-```markdown
-# keyword
-
-> "Exact quote from source"
-— Author Name (24.3% relevance)
-
-> "Another relevant quote"
-— Source Document (23.7% relevance)
-```
+#### Database Overview Standalone (`/database-overview`)
+**Template**: `templates/database_overview.html`
+- Standalone database viewer
+- Now integrated into main page
 
 ## Configuration Files
 
 ### `.env` (Required)
-API keys - **NEVER commit to git**
+API keys and configuration - **NEVER commit to git**
 ```
-LLAMA_CLOUD_API_KEY=llx-...
+# Required
 OPENAI_API_KEY=sk-proj-...
 ANTHROPIC_API_KEY=sk-ant-api03-...
+
+# Optional (PDF extraction fallback)
+LLAMA_CLOUD_API_KEY=llx-...
+
+# Optional (Qdrant Cloud for production)
+QDRANT_URL=https://...qdrant.io
+QDRANT_API_KEY=...
+
+# Optional (custom port)
+PORT=8080
 ```
 
 ### `.env.example` (Template)
@@ -297,6 +392,20 @@ Markdown Output (quotes with authors & relevance)
 
 ## Key Design Decisions
 
+### Why Flexible Instructions over Fixed Endpoints?
+- **Versatility**: One endpoint handles any content type (quotes, posts, summaries, insights)
+- **User Control**: Users define exactly what they want
+- **Future-Proof**: No need to create new endpoints for new content types
+- **Template System**: Quick presets for common use cases while maintaining flexibility
+- **Reduces Code**: One well-designed endpoint vs. many specialized ones
+
+### Why Anti-Hallucination Focus?
+- **Trust**: Users need confidence content comes from actual sources
+- **Accuracy**: Word-for-word extraction prevents AI fabrication
+- **Verification**: Full source chunks allow users to verify claims
+- **Quality**: Relevance threshold filters out weak matches
+- **Transparency**: Scores and sources visible for every result
+
 ### Why One Collection?
 - **Simplified**: All documents in `pdf_documents` collection
 - **Consistent**: Single source of truth
@@ -311,15 +420,17 @@ Markdown Output (quotes with authors & relevance)
 
 ### Why Claude 3 Haiku?
 - **Speed**: Fastest Claude model
-- **Cost**: Most economical
-- **Sufficient**: Handles quote extraction well
-- **JSON**: Reliable structured output
+- **Cost**: Most economical for high-volume requests
+- **Sufficient**: Handles content generation well
+- **Following Instructions**: Excellent at adhering to strict extraction rules
+- **Quality Output**: Reliable structured responses
 
-### Why Local Qdrant?
-- **Privacy**: Data stays on your machine
-- **No Costs**: No cloud database fees
-- **Fast**: Local queries = low latency
-- **Simple**: No cloud setup required
+### Why Qdrant Cloud with Local Fallback?
+- **Production**: Cloud for scalability and reliability
+- **Development**: Local for offline work and testing
+- **Flexibility**: Automatic detection via environment variables
+- **Migration**: Easy transfer with migration script
+- **No Vendor Lock**: Can switch back to local anytime
 
 ## Security Considerations
 
@@ -392,29 +503,44 @@ Example for 50-page scanned PDF (LlamaParse fallback):
 ### Project Structure
 ```
 Tao Bite/
-├── app.py                      # Main Flask application
+├── app.py                           # Main Flask application
+├── migrate_to_qdrant_cloud.py      # Cloud migration script
+├── obsidian_pdf_converter.py       # PDF converter utility
 ├── templates/
-│   ├── index.html              # PDF upload & conversion
-│   └── quote_extractor.html    # Quote extraction interface
-├── uploads/                    # Uploaded PDFs (gitignored)
-├── outputs/                    # Converted Markdown (gitignored)
-├── qdrant_storage/             # Vector database (gitignored)
-├── .env                        # API keys (gitignored)
-├── .env.example                # Template
-├── .gitignore                  # Git exclusions
-├── requirements.txt            # Python dependencies
-├── README.md                   # User documentation
-└── project.md                  # This file (technical docs)
+│   ├── index.html                  # Main interface (AI Generator + DB Overview)
+│   ├── admin.html                  # Admin upload page
+│   ├── database_overview.html      # Standalone DB viewer (legacy)
+│   ├── draft_generator.html        # Substack draft generator (legacy)
+│   └── quote_extractor.html        # Legacy quote extractor
+├── uploads/                        # Uploaded PDFs (gitignored)
+├── outputs/                        # Converted Markdown (gitignored)
+├── qdrant_storage/                 # Local vector DB (gitignored)
+├── .env                            # API keys (gitignored)
+├── .env.example                    # Example environment file
+├── .gitignore                      # Git exclusions
+├── requirements.txt                # Python dependencies
+├── README.md                       # User documentation
+└── project.md                      # This file (technical docs)
 ```
 
 ### Key Functions in app.py
 
-- `convert_pdf_async()`: Background PDF conversion
-- `chunk_markdown()`: Intelligent text splitting
-- `get_openai_embeddings()`: Generate embeddings
-- `inject_to_qdrant()`: Store vectors in database
-- `extract_quotes()`: AI-powered quote extraction
-- `search_qdrant()`: Semantic search
+**Core Pipeline**:
+- `convert_pdf_async()`: Background PDF conversion with pdfplumber/LlamaParse
+- `chunk_markdown()`: Intelligent text splitting with token counting
+- `get_openai_embeddings()`: Batch embedding generation
+- `inject_to_qdrant()`: Store vectors in database with metadata
+- `search_qdrant()`: Semantic similarity search
+
+**AI Content Generation**:
+- `generate_content()`: New flexible content generator (main endpoint)
+- `extract_quotes()`: Legacy quote extraction (backward compatibility)
+- `generate_draft()`: Legacy draft generator
+
+**Database Management**:
+- `get_database_stats()`: Global statistics
+- `get_database_documents()`: List documents with metadata
+- `init_qdrant()`: Initialize Qdrant client (cloud or local)
 
 ### Adding New Features
 
