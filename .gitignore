@@ -50,6 +50,10 @@ Thumbs.db
 # Environment variables
 .env
 .env.local
+vercel-env-variables.txt
+
+# Backend (separate git repository)
+backend/
 
 # Uploads and outputs
 uploads/

@@ -19,7 +19,7 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 40px 20px;
         }
@@ -76,6 +76,47 @@
             border-bottom: 3px solid #667eea;
         }
 
+        .info-box {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #1976d2;
+        }
+
+        .info-box h3 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+            color: #555;
+        }
+
+        .info-box li {
+            margin: 5px 0;
+        }
+
+        .limits-box {
+            background: #fff3e0;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ff9800;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .limit-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #e65100;
+        }
+
         .upload-area {
             border: 3px dashed #667eea;
             border-radius: 15px;
@@ -89,6 +130,11 @@
         .upload-area:hover {
             border-color: #764ba2;
             background: #f0f2ff;
+        }
+
+        .upload-area.drag-over {
+            border-color: #4caf50;
+            background: #e8f5e9;
         }
 
         .upload-icon {
@@ -107,16 +153,95 @@
             display: none;
         }
 
-        .selected-file {
-            margin-top: 20px;
-            padding: 15px;
-            background: #e8f5e9;
-            border-radius: 10px;
+        .files-list {
+            margin-top: 30px;
             display: none;
         }
 
-        .selected-file.show {
+        .files-list.show {
             display: block;
+        }
+
+        .file-item {
+            background: #f8f9ff;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #667eea;
+        }
+
+        .file-item.processing {
+            border-left-color: #ff9800;
+        }
+
+        .file-item.uploaded {
+            border-left-color: #2196f3;
+            background: #e3f2fd;
+        }
+
+        .file-item.completed {
+            border-left-color: #4caf50;
+            background: #e8f5e9;
+        }
+
+        .file-item.error {
+            border-left-color: #f44336;
+            background: #ffebee;
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .file-size {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .file-status {
+            font-size: 0.9rem;
+            color: #1976d2;
+            margin-top: 5px;
+        }
+
+        .file-progress {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .file-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+
+        .remove-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .remove-btn:hover {
+            background: #d32f2f;
         }
 
         .btn {
@@ -141,95 +266,82 @@
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
+            transform: none;
         }
 
-        .status {
-            margin-top: 30px;
-            display: none;
-        }
-
-        .status.show {
-            display: block;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 30px;
-            background: #e0e0e0;
-            border-radius: 15px;
-            overflow: hidden;
-            margin-bottom: 15px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            transition: width 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-        }
-
-        .status-message {
-            padding: 15px;
-            background: #f5f5f5;
-            border-radius: 10px;
-            color: #666;
-        }
-
-        .success {
-            background: #e8f5e9;
-            color: #2e7d32;
-            padding: 15px;
-            border-radius: 10px;
-        }
-
-        .error {
+        .error-message {
             background: #ffebee;
             color: #c62828;
             padding: 15px;
             border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .summary-box {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #4caf50;
+            display: none;
+        }
+
+        .summary-box.show {
+            display: block;
+        }
+
+        .summary-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
         }
 
         .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
             display: inline-block;
-            margin-right: 10px;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
             vertical-align: middle;
         }
 
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
-        }
-
-        .info-box {
-            background: #e3f2fd;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            border-left: 4px solid #1976d2;
-        }
-
-        .info-box h3 {
-            color: #1976d2;
-            margin-bottom: 10px;
-        }
-
-        .info-box ul {
-            margin-left: 20px;
-            color: #555;
-        }
-
-        .info-box li {
-            margin: 5px 0;
         }
     </style>
 </head>
@@ -239,100 +351,196 @@
 
         <div class="header">
             <h1>🔐 Admin Panel</h1>
-            <p>Upload and Process PDF Documents</p>
+            <p>Upload and Process Multiple PDF Documents</p>
         </div>
 
         <div class="card">
-            <div class="section-title">📤 Upload & Process PDF</div>
+            <div class="section-title">📤 Batch Upload & Process PDFs</div>
 
             <div class="info-box">
                 <h3>ℹ️ How it works</h3>
                 <ul>
-                    <li>Upload a PDF document</li>
-                    <li>Text is extracted using pdfplumber (with LlamaParse fallback)</li>
+                    <li><strong>Select multiple PDFs</strong> at once (up to 10 files)</li>
+                    <li>Text is extracted using <strong>pdfplumber</strong> (free, local) with LlamaParse fallback</li>
                     <li>Content is automatically chunked into smaller pieces</li>
                     <li>Embeddings are generated using OpenAI</li>
-                    <li>Document is added to the searchable knowledge base</li>
+                    <li>Documents are added to the searchable knowledge base</li>
                 </ul>
+            </div>
+
+            <div class="limits-box">
+                <div class="limit-item">
+                    📊 <span>Max: 10 files per batch</span>
+                </div>
+                <div class="limit-item">
+                    💾 <span>Max: 20 MB total size</span>
+                </div>
+            </div>
+
+            <div style="background: #fff9e6; padding: 15px 20px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #ffc107;">
+                <strong style="color: #f57c00;">💡 Tip:</strong>
+                <span style="color: #666;">For best results, process <strong>3-5 files at a time</strong>. Large batches may experience network timeouts.</span>
             </div>
 
             <div class="upload-area" id="uploadArea">
                 <div class="upload-icon">📁</div>
-                <div class="upload-text">Click or drag & drop your PDF here</div>
-                <div style="font-size: 0.9rem; color: #666;">pdfplumber (free, local) with LlamaParse fallback</div>
-                <input type="file" id="fileInput" accept=".pdf">
+                <div class="upload-text">Click or drag & drop your PDFs here</div>
+                <div style="font-size: 0.9rem; color: #666;">Select multiple files at once</div>
+                <input type="file" id="fileInput" accept=".pdf" multiple>
             </div>
 
-            <div class="selected-file" id="selectedFile">
-                <strong>Selected file:</strong>
-                <div id="fileName" style="margin-top: 5px; word-break: break-all;"></div>
+            <div class="error-message" id="errorMessage"></div>
+
+            <div class="files-list" id="filesList">
+                <h3 style="margin-bottom: 15px; color: #333;">📋 Selected Files (<span id="filesCount">0</span>)</h3>
+                <div id="filesContainer"></div>
+
+                <button class="btn" id="processBtn">
+                    🚀 Process All Documents
+                </button>
             </div>
 
-            <button class="btn" id="convertBtn" style="display: none;">
-                🔄 Convert & Inject into Knowledge Base
-            </button>
-
-            <div class="status" id="statusArea">
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill" style="width: 0%">0%</div>
+            <div class="summary-box" id="summaryBox">
+                <div class="summary-title">✅ Processing Complete!</div>
+                <div class="summary-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalProcessed">0</div>
+                        <div class="stat-label">Processed</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalChunks">0</div>
+                        <div class="stat-label">Total Chunks</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalTokens">0</div>
+                        <div class="stat-label">Total Tokens</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalErrors">0</div>
+                        <div class="stat-label">Errors</div>
+                    </div>
                 </div>
-                <div class="status-message" id="statusMessage"></div>
             </div>
         </div>
     </div>
 
     <script>
-        // Upload section variables
+        const MAX_FILES = 10;
+        const MAX_TOTAL_SIZE = 20 * 1024 * 1024; // 20 MB
+
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
-        const selectedFile = document.getElementById('selectedFile');
-        const fileName = document.getElementById('fileName');
-        const convertBtn = document.getElementById('convertBtn');
-        const statusArea = document.getElementById('statusArea');
-        const statusMessage = document.getElementById('statusMessage');
-        const progressFill = document.getElementById('progressFill');
+        const filesList = document.getElementById('filesList');
+        const filesContainer = document.getElementById('filesContainer');
+        const filesCount = document.getElementById('filesCount');
+        const processBtn = document.getElementById('processBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const summaryBox = document.getElementById('summaryBox');
 
-        let selectedPdfFile = null;
+        let selectedFiles = [];
+        let processingStats = {
+            processed: 0,
+            chunks: 0,
+            tokens: 0,
+            errors: 0
+        };
 
         // Upload area events
         uploadArea.addEventListener('click', () => fileInput.click());
 
         fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) handleFileSelect(file);
+            handleFiles(Array.from(e.target.files));
         });
 
         uploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
-            uploadArea.style.borderColor = '#764ba2';
-            uploadArea.style.background = '#e8ebff';
+            uploadArea.classList.add('drag-over');
         });
 
         uploadArea.addEventListener('dragleave', () => {
-            uploadArea.style.borderColor = '#667eea';
-            uploadArea.style.background = '#f8f9ff';
+            uploadArea.classList.remove('drag-over');
         });
 
         uploadArea.addEventListener('drop', (e) => {
             e.preventDefault();
-            uploadArea.style.borderColor = '#667eea';
-            uploadArea.style.background = '#f8f9ff';
+            uploadArea.classList.remove('drag-over');
 
-            const file = e.dataTransfer.files[0];
-            if (file && file.type === 'application/pdf') {
-                fileInput.files = e.dataTransfer.files;
-                handleFileSelect(file);
-            } else {
-                alert('Please select a PDF file');
-            }
+            const files = Array.from(e.dataTransfer.files).filter(f => f.type === 'application/pdf');
+            handleFiles(files);
         });
 
-        function handleFileSelect(file) {
-            selectedPdfFile = file;
-            fileName.textContent = file.name + ' (' + formatFileSize(file.size) + ')';
-            selectedFile.classList.add('show');
-            convertBtn.style.display = 'block';
-            statusArea.classList.remove('show');
+        function handleFiles(files) {
+            errorMessage.classList.remove('show');
+
+            // Validate number of files
+            if (selectedFiles.length + files.length > MAX_FILES) {
+                showError(`You can only upload up to ${MAX_FILES} files at once. Currently selected: ${selectedFiles.length}`);
+                return;
+            }
+
+            // Validate total size
+            const currentSize = selectedFiles.reduce((sum, f) => sum + f.size, 0);
+            const newSize = files.reduce((sum, f) => sum + f.size, 0);
+
+            if (currentSize + newSize > MAX_TOTAL_SIZE) {
+                showError(`Total size cannot exceed 20 MB. Current: ${formatFileSize(currentSize)}, Adding: ${formatFileSize(newSize)}`);
+                return;
+            }
+
+            // Add files
+            files.forEach(file => {
+                if (!selectedFiles.find(f => f.name === file.name)) {
+                    selectedFiles.push({
+                        file: file,
+                        id: Date.now() + Math.random(),
+                        status: 'pending'
+                    });
+                }
+            });
+
+            updateFilesList();
+        }
+
+        function updateFilesList() {
+            if (selectedFiles.length === 0) {
+                filesList.classList.remove('show');
+                return;
+            }
+
+            filesList.classList.add('show');
+            filesCount.textContent = selectedFiles.length;
+
+            filesContainer.innerHTML = selectedFiles.map(item => `
+                <div class="file-item ${item.status}" id="file-${item.id}">
+                    <div class="file-info">
+                        <div class="file-name">📄 ${item.file.name}</div>
+                        <div class="file-size">${formatFileSize(item.file.size)}</div>
+                        ${item.status !== 'pending' ? `
+                            <div class="file-status" id="status-${item.id}">${getStatusText(item)}</div>
+                            ${(item.status === 'processing' || item.status === 'uploaded') ? `<div class="file-progress"><div class="file-progress-fill" id="progress-${item.id}" style="width: 0%"></div></div>` : ''}
+                        ` : ''}
+                    </div>
+                    ${item.status === 'pending' ? `<button class="remove-btn" onclick="removeFile('${item.id}')">Remove</button>` : ''}
+                </div>
+            `).join('');
+
+            // Show total size
+            const totalSize = selectedFiles.reduce((sum, item) => sum + item.file.size, 0);
+            const sizeWarning = totalSize > MAX_TOTAL_SIZE * 0.8 ? ' ⚠️ Near limit!' : '';
+            filesCount.textContent = `${selectedFiles.length} - ${formatFileSize(totalSize)}${sizeWarning}`;
+        }
+
+        function getStatusText(item) {
+            if (item.status === 'processing') return '<span class="spinner"></span> Uploading...';
+            if (item.status === 'uploaded') return '<span class="spinner"></span> Processing...';
+            if (item.status === 'completed') return `✅ Completed - ${item.chunks || 0} chunks, ${item.tokens?.toLocaleString() || 0} tokens`;
+            if (item.status === 'error') return `❌ Error: ${item.error}`;
+            return '';
+        }
+
+        function removeFile(id) {
+            selectedFiles = selectedFiles.filter(item => item.id !== id);
+            updateFilesList();
         }
 
         function formatFileSize(bytes) {
@@ -341,129 +549,220 @@
             return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
         }
 
-        // Convert & Auto-inject
-        convertBtn.addEventListener('click', async () => {
-            if (!selectedPdfFile) return;
-
-            convertBtn.disabled = true;
-            statusArea.classList.add('show');
-            updateProgress(10, 'Uploading PDF...');
-
-            const formData = new FormData();
-            formData.append('file', selectedPdfFile);
-
-            try {
-                const response = await fetch('/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    const jobId = data.job_id;
-                    updateProgress(30, 'Converting with pdfplumber...');
-                    pollStatus(jobId);
-                } else {
-                    showError(data.error || 'Upload error');
-                }
-            } catch (error) {
-                showError('Connection error: ' + error.message);
-            }
-        });
-
-        function pollStatus(jobId) {
-            const interval = setInterval(async () => {
-                try {
-                    const response = await fetch('/status/' + jobId);
-                    const data = await response.json();
-
-                    if (data.status === 'processing') {
-                        updateProgress(60, data.message);
-                    } else if (data.status === 'completed') {
-                        clearInterval(interval);
-                        updateProgress(70, 'Conversion completed! Starting auto-pipeline...');
-                        runAutoPipeline(jobId);
-                    } else if (data.status === 'error') {
-                        clearInterval(interval);
-                        showError(data.message);
-                    }
-                } catch (error) {
-                    clearInterval(interval);
-                    showError('Status check error');
-                }
-            }, 2000);
+        function showError(message) {
+            errorMessage.textContent = '❌ ' + message;
+            errorMessage.classList.add('show');
         }
 
-        async function runAutoPipeline(jobId) {
-            try {
-                updateProgress(75, 'Chunking and generating embeddings...');
+        // Process all files
+        processBtn.addEventListener('click', async () => {
+            if (selectedFiles.length === 0) return;
 
-                const response = await fetch('/auto-pipeline/' + jobId, {
+            processBtn.disabled = true;
+            errorMessage.classList.remove('show');
+            summaryBox.classList.remove('show');
+
+            // Reset stats
+            processingStats = { processed: 0, chunks: 0, tokens: 0, errors: 0 };
+
+            // PHASE 1: Upload ALL files first (fast, in parallel)
+            console.log('Phase 1: Uploading all files...');
+            const uploadPromises = selectedFiles
+                .filter(item => item.status === 'pending')
+                .map(item => uploadFile(item));
+
+            await Promise.allSettled(uploadPromises);
+
+            // PHASE 2: Process files with job IDs (embeddings)
+            console.log('Phase 2: Processing uploaded files...');
+            for (const item of selectedFiles) {
+                if (item.status === 'uploaded' && item.jobId) {
+                    await processUploadedFile(item);
+                }
+            }
+
+            // Show summary
+            displaySummary();
+            processBtn.disabled = false;
+        });
+
+        // Helper: Fetch with timeout and retry
+        async function fetchWithRetry(url, options, retries = 2, timeout = 120000) {
+            for (let i = 0; i <= retries; i++) {
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+                    const response = await fetch(url, {
+                        ...options,
+                        signal: controller.signal
+                    });
+
+                    clearTimeout(timeoutId);
+                    return response;
+
+                } catch (error) {
+                    if (i === retries) throw error;
+
+                    // Wait before retry (exponential backoff)
+                    await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+                }
+            }
+        }
+
+        // PHASE 1: Just upload the file
+        async function uploadFile(item) {
+            item.status = 'processing';
+            updateFilesList();
+
+            try {
+                updateFileStatus(item.id, 'Uploading...');
+                const formData = new FormData();
+                formData.append('file', item.file);
+
+                const uploadResponse = await fetchWithRetry('/upload', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    body: formData
+                }, 2, 60000);
+
+                const uploadData = await uploadResponse.json();
+
+                if (!uploadResponse.ok) {
+                    throw new Error(uploadData.error || 'Upload failed');
+                }
+
+                item.jobId = uploadData.job_id;
+                item.status = 'uploaded';
+                updateFileStatus(item.id, '✓ Uploaded, waiting...');
+                updateFileProgress(item.id, 20);
+                updateFilesList();
+
+            } catch (error) {
+                item.status = 'error';
+                let errorMsg = error.message;
+                if (error.name === 'AbortError') {
+                    errorMsg = 'Upload timeout';
+                } else if (errorMsg.includes('Failed to fetch')) {
+                    errorMsg = 'Network error';
+                }
+                item.error = errorMsg;
+                processingStats.errors++;
+                updateFilesList();
+                console.error(`Error uploading ${item.file.name}:`, error);
+            }
+        }
+
+        // PHASE 2: Process uploaded file (conversion + embeddings)
+        async function processUploadedFile(item) {
+            try {
+                // Step 1: Wait for conversion
+                updateFileStatus(item.id, 'Converting...');
+                await pollConversion(item.jobId, item.id);
+
+                // Step 2: Auto-pipeline (chunking + embeddings + injection)
+                updateFileStatus(item.id, 'Generating embeddings...');
+                updateFileProgress(item.id, 70);
+
+                const pipelineResponse = await fetchWithRetry('/auto-pipeline/' + item.jobId, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         chunk_size: 1000,
                         chunk_overlap: 200,
                         collection_name: 'pdf_documents'
                     })
-                });
+                }, 2, 180000);
 
-                const data = await response.json();
+                const pipelineData = await pipelineResponse.json();
 
-                if (response.ok) {
-                    updateProgress(100, 'Complete!');
-                    displaySuccess(data);
-                } else {
-                    showError(data.error || 'Pipeline error');
+                if (!pipelineResponse.ok) {
+                    throw new Error(pipelineData.error || 'Pipeline failed');
                 }
+
+                // Success
+                item.status = 'completed';
+                item.chunks = pipelineData.total_chunks;
+                item.tokens = pipelineData.total_tokens;
+
+                processingStats.processed++;
+                processingStats.chunks += pipelineData.total_chunks;
+                processingStats.tokens += pipelineData.total_tokens;
+
+                updateFileProgress(item.id, 100);
+                updateFilesList();
+
             } catch (error) {
-                showError('Error: ' + error.message);
+                item.status = 'error';
+                let errorMsg = error.message;
+                if (error.name === 'AbortError') {
+                    errorMsg = 'Processing timeout';
+                } else if (errorMsg.includes('Failed to fetch')) {
+                    errorMsg = 'Network error during processing';
+                }
+                item.error = errorMsg;
+                processingStats.errors++;
+                updateFilesList();
+                console.error(`Error processing ${item.file.name}:`, error);
             }
         }
 
-        function updateProgress(percent, message) {
-            progressFill.style.width = percent + '%';
-            progressFill.textContent = percent + '%';
-            statusMessage.innerHTML = '<span class="spinner"></span> ' + message;
+        async function pollConversion(jobId, fileId) {
+            return new Promise((resolve, reject) => {
+                let attempts = 0;
+                const maxAttempts = 60; // 2 minutes max (60 * 2s)
+
+                const interval = setInterval(async () => {
+                    attempts++;
+
+                    if (attempts > maxAttempts) {
+                        clearInterval(interval);
+                        reject(new Error('Conversion timeout - took too long'));
+                        return;
+                    }
+
+                    try {
+                        const response = await fetchWithRetry('/status/' + jobId, {}, 1, 10000);
+                        const data = await response.json();
+
+                        if (data.status === 'processing') {
+                            updateFileProgress(fileId, 40);
+                        } else if (data.status === 'completed') {
+                            clearInterval(interval);
+                            updateFileProgress(fileId, 60);
+                            resolve();
+                        } else if (data.status === 'error') {
+                            clearInterval(interval);
+                            reject(new Error(data.message));
+                        }
+                    } catch (error) {
+                        clearInterval(interval);
+                        reject(error);
+                    }
+                }, 2000);
+            });
         }
 
-        function displaySuccess(data) {
-            const methodBadge = data.method === 'pdfplumber' ? '📄 pdfplumber' : '🚀 LlamaParse';
-            const methodColor = data.method === 'pdfplumber' ? '#2e7d32' : '#1976d2';
-
-            statusMessage.innerHTML = `
-                <div class="success" style="font-size: 1.2rem; font-weight: 700; padding: 25px;">
-                    ✅ Success! PDF processed and injected into knowledge base
-                    <div style="margin-top: 15px; font-size: 1rem;">
-                        <span style="background: ${methodColor}; color: white; padding: 6px 14px; border-radius: 12px; margin-right: 10px;">
-                            ${methodBadge}
-                        </span>
-                        <span style="background: #667eea; color: white; padding: 6px 14px; border-radius: 12px;">
-                            ${data.total_chunks} chunks
-                        </span>
-                        <span style="background: #11998e; color: white; padding: 6px 14px; border-radius: 12px; margin-left: 10px;">
-                            ${data.total_tokens} tokens
-                        </span>
-                    </div>
-                    <div style="margin-top: 15px; font-size: 0.95rem; color: #2e7d32;">
-                        📦 Total vectors in database: ${data.total_vectors_in_collection}
-                    </div>
-                    <div style="margin-top: 20px;">
-                        <a href="/" style="display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
-                            ← Back to Home
-                        </a>
-                    </div>
-                </div>
-            `;
-            convertBtn.disabled = false;
+        function updateFileStatus(id, status) {
+            const statusEl = document.getElementById('status-' + id);
+            if (statusEl) {
+                statusEl.innerHTML = '<span class="spinner"></span> ' + status;
+            }
         }
 
-        function showError(message) {
-            statusMessage.innerHTML = `<div class="error">❌ ${message}</div>`;
-            convertBtn.disabled = false;
+        function updateFileProgress(id, percent) {
+            const progressEl = document.getElementById('progress-' + id);
+            if (progressEl) {
+                progressEl.style.width = percent + '%';
+            }
+        }
+
+        function displaySummary() {
+            document.getElementById('totalProcessed').textContent = processingStats.processed;
+            document.getElementById('totalChunks').textContent = processingStats.chunks.toLocaleString();
+            document.getElementById('totalTokens').textContent = processingStats.tokens.toLocaleString();
+            document.getElementById('totalErrors').textContent = processingStats.errors;
+
+            summaryBox.classList.add('show');
         }
     </script>
 </body>

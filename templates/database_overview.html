@@ -295,6 +295,97 @@
             background: white;
             cursor: pointer;
         }
+
+        .search-box {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .clear-search {
+            padding: 12px 20px;
+            background: #f5f5f5;
+            color: #666;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .clear-search:hover {
+            background: #e0e0e0;
+        }
+
+        .document-item-compact {
+            background: #f8f9ff;
+            border-left: 4px solid #667eea;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .document-item-compact:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateX(5px);
+        }
+
+        .document-name-compact {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            flex: 1;
+            word-break: break-word;
+        }
+
+        .document-badges {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .highlight {
+            background-color: #ffeb3b;
+            font-weight: 700;
+        }
     </style>
 </head>
 <body>
@@ -304,11 +395,10 @@
             <p>Visualisation de tous les ouvrages et documents stockés</p>
         </div>
 
-        <div class="nav-links">
-            <a href="/" class="nav-link">🏠 Accueil</a>
-            <a href="/draft-generator" class="nav-link">✍️ Draft Generator</a>
-            <a href="/quote-extractor" class="nav-link">💬 Quote Extractor</a>
-            <a href="/obsidian-converter" class="nav-link">📝 Obsidian Converter</a>
+        <div style="text-align: center; margin-bottom: 30px;">
+            <a href="/" style="display: inline-block; padding: 10px 20px; background: white; color: #667eea; text-decoration: none; border-radius: 10px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                🏠 Retour à l'Accueil
+            </a>
         </div>
 
         <!-- Statistics Card -->
@@ -334,6 +424,18 @@
                 <select id="collectionSelect" onchange="loadDocuments()">
                     <option value="pdf_documents">pdf_documents</option>
                 </select>
+            </div>
+
+            <div class="search-box">
+                <input
+                    type="text"
+                    id="searchInput"
+                    class="search-input"
+                    placeholder="🔍 Rechercher un document par nom de fichier..."
+                    onkeypress="if(event.key === 'Enter') searchDocuments()"
+                >
+                <button class="search-btn" onclick="searchDocuments()">Rechercher</button>
+                <button class="clear-search" onclick="clearSearch()">Effacer</button>
             </div>
 
             <div id="documentsArea">
@@ -416,23 +518,28 @@
             statsArea.innerHTML = statsHtml;
         }
 
-        async function loadDocuments() {
+        async function loadDocuments(searchTerm = '') {
             const documentsArea = document.getElementById('documentsArea');
             const collectionName = document.getElementById('collectionSelect').value;
 
             documentsArea.innerHTML = `
                 <div class="loading">
                     <div class="spinner"></div>
-                    <p>Chargement des documents...</p>
+                    <p>Chargement des documents${searchTerm ? ' (recherche en cours...)' : '...'}</p>
                 </div>
             `;
 
             try {
-                const response = await fetch(`/api/database/documents?collection_name=${collectionName}&limit=200`);
+                let url = `/api/database/documents/list?collection_name=${collectionName}`;
+                if (searchTerm) {
+                    url += `&search=${encodeURIComponent(searchTerm)}`;
+                }
+
+                const response = await fetch(url);
                 const data = await response.json();
 
                 if (response.ok) {
-                    displayDocuments(data);
+                    displayDocuments(data, searchTerm);
                 } else {
                     documentsArea.innerHTML = `<div class="error">❌ ${data.error || 'Erreur lors du chargement des documents'}</div>`;
                 }
@@ -441,15 +548,32 @@
             }
         }
 
-        function displayDocuments(data) {
+        function searchDocuments() {
+            const searchInput = document.getElementById('searchInput');
+            const searchTerm = searchInput.value.trim();
+            loadDocuments(searchTerm);
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            loadDocuments();
+        }
+
+        function highlightText(text, searchTerm) {
+            if (!searchTerm) return text;
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            return text.replace(regex, '<span class="highlight">$1</span>');
+        }
+
+        function displayDocuments(data, searchTerm = '') {
             const documentsArea = document.getElementById('documentsArea');
 
             if (!data.documents || data.documents.length === 0) {
                 documentsArea.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-icon">📭</div>
-                        <h3>Aucun document trouvé</h3>
-                        <p>Commencez par uploader des PDFs sur la page d'accueil</p>
+                        <h3>${searchTerm ? 'Aucun document trouvé' : 'Aucun document dans la base'}</h3>
+                        <p>${searchTerm ? `Aucun document ne correspond à "${searchTerm}"` : 'Commencez par uploader des PDFs sur la page d\'accueil'}</p>
                     </div>
                 `;
                 return;
@@ -457,54 +581,23 @@
 
             let html = `
                 <div style="background: #e3f2fd; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-                    <strong style="color: #1976d2;">📊 Résumé:</strong>
+                    <strong style="color: #1976d2;">📊 ${searchTerm ? 'Résultats de recherche' : 'Total'}:</strong>
                     ${data.total_documents} document(s) unique(s),
-                    ${data.total_chunks_in_collection.toLocaleString()} chunks total
+                    ${data.total_chunks.toLocaleString()} chunks total
+                    ${searchTerm ? `<br><strong>Recherche:</strong> "${searchTerm}"` : ''}
                 </div>
                 <div class="document-list">
             `;
 
             data.documents.forEach((doc, index) => {
+                const displayName = highlightText(doc.filename, searchTerm);
                 html += `
-                    <div class="document-item">
-                        <div class="document-header">
-                            <div class="document-name">📄 ${doc.filename}</div>
+                    <div class="document-item-compact">
+                        <div class="document-name-compact">📄 ${displayName}</div>
+                        <div class="document-badges">
                             <span class="document-badge">${doc.chunk_count} chunks</span>
-                            <span class="document-badge" style="background: #11998e;">${doc.source}</span>
-                        </div>
-
-                        <div class="document-stats">
-                            <div class="stat-item">
-                                <div class="stat-value">${doc.chunk_count}</div>
-                                <div class="stat-title">Chunks</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value">${doc.total_tokens.toLocaleString()}</div>
-                                <div class="stat-title">Tokens</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value">${(doc.total_chars / 1000).toFixed(1)}k</div>
-                                <div class="stat-title">Caractères</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value">${Math.round(doc.total_tokens / doc.chunk_count)}</div>
-                                <div class="stat-title">Tokens/Chunk</div>
-                            </div>
-                        </div>
-
-                        <button class="toggle-chunks" onclick="toggleChunks('${index}')">
-                            👁️ Voir les chunks
-                        </button>
-
-                        <div id="chunks-${index}" class="chunks-preview" style="display: none;">
-                            <strong style="color: #667eea;">Aperçu des premiers chunks:</strong>
-                            ${doc.chunks.slice(0, 5).map(chunk => `
-                                <div class="chunk-item">
-                                    <div class="chunk-header">Chunk #${chunk.chunk_id} (${chunk.token_count} tokens)</div>
-                                    <div>${chunk.text_preview}</div>
-                                </div>
-                            `).join('')}
-                            ${doc.chunks.length > 5 ? `<div style="text-align: center; color: #666; margin-top: 10px;">... et ${doc.chunks.length - 5} autres chunks</div>` : ''}
+                            <span class="document-badge" style="background: #11998e;">${doc.total_tokens.toLocaleString()} tokens</span>
+                            <span class="document-badge" style="background: #f59e0b;">${doc.source}</span>
                         </div>
                     </div>
                 `;
@@ -512,24 +605,7 @@
 
             html += '</div>';
 
-            if (data.has_more) {
-                html += `
-                    <div style="text-align: center; margin-top: 20px; color: #666;">
-                        <p>Plus de documents disponibles (affichage des ${data.limit} premiers)</p>
-                    </div>
-                `;
-            }
-
             documentsArea.innerHTML = html;
-        }
-
-        function toggleChunks(index) {
-            const chunksDiv = document.getElementById(`chunks-${index}`);
-            if (chunksDiv.style.display === 'none') {
-                chunksDiv.style.display = 'block';
-            } else {
-                chunksDiv.style.display = 'none';
-            }
         }
     </script>
 </body>

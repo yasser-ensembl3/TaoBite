@@ -637,31 +637,21 @@
             </a>
         </div>
 
-        <!-- Database Overview Section (Collapsible) -->
+        <!-- Database Overview Section -->
         <div class="card">
-            <div class="collapsible-header" onclick="toggleDatabaseView()">
-                <div>
-                    <div class="collapsible-title">
-                        📚 2. Database Overview - All Documents
-                    </div>
-                    <div class="click-hint">👆 Click to expand and view all documents</div>
-                </div>
-                <div class="collapsible-icon" id="dbToggleIcon">▼</div>
-            </div>
+            <div class="section-title">📚 2. Database Overview - All Documents</div>
 
-            <div class="collapsible-content" id="databaseContent">
-                <!-- Stats -->
-                <div id="dbStatsArea">
-                    <div style="text-align: center; padding: 20px; color: #666;">
-                        <span class="spinner"></span> Loading statistics...
+            <div style="background: #f8f9ff; padding: 20px; border-radius: 12px; border-left: 4px solid #667eea;">
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                    <div style="flex: 1;">
+                        <strong style="color: #667eea; font-size: 1.1rem;">🔍 Full Database View with Search</strong>
+                        <div style="color: #666; font-size: 0.95rem; margin-top: 8px; line-height: 1.5;">
+                            Browse all <strong>19 documents</strong> with advanced search and filtering capabilities. Quickly check if a document already exists in your knowledge base.
+                        </div>
                     </div>
-                </div>
-
-                <!-- Documents List -->
-                <div id="dbDocumentsArea" style="margin-top: 20px;">
-                    <div style="text-align: center; padding: 20px; color: #666;">
-                        <span class="spinner"></span> Loading documents...
-                    </div>
+                    <a href="/database-overview" style="display: inline-block; padding: 15px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 10px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3); white-space: nowrap;">
+                        📊 Open Database Overview
+                    </a>
                 </div>
             </div>
         </div>
@@ -849,145 +839,6 @@ Make it actionable and practical.`
             }
         }
 
-        // Database Overview Section
-        let databaseViewExpanded = false;
-        let databaseDataLoaded = false;
-
-        function toggleDatabaseView() {
-            const content = document.getElementById('databaseContent');
-            const icon = document.getElementById('dbToggleIcon');
-            const hint = document.querySelector('.click-hint');
-
-            databaseViewExpanded = !databaseViewExpanded;
-
-            if (databaseViewExpanded) {
-                content.classList.add('expanded');
-                icon.classList.add('expanded');
-                hint.textContent = '👇 Click to collapse';
-
-                // Load data only once
-                if (!databaseDataLoaded) {
-                    loadDatabaseStats();
-                    loadDatabaseDocuments();
-                    databaseDataLoaded = true;
-                }
-            } else {
-                content.classList.remove('expanded');
-                icon.classList.remove('expanded');
-                hint.textContent = '👆 Click to expand and view all documents';
-            }
-        }
-
-        async function loadDatabaseStats() {
-            const statsArea = document.getElementById('dbStatsArea');
-
-            try {
-                const response = await fetch('/api/database/stats');
-                const data = await response.json();
-
-                if (response.ok) {
-                    let statsHtml = '<div class="db-stats-grid">';
-
-                    statsHtml += `
-                        <div class="db-stat-card">
-                            <div class="db-stat-number">${data.total_vectors.toLocaleString()}</div>
-                            <div class="db-stat-label">Total Vectors</div>
-                        </div>
-                    `;
-
-                    statsHtml += `
-                        <div class="db-stat-card">
-                            <div class="db-stat-number">${data.collections.length}</div>
-                            <div class="db-stat-label">Collections</div>
-                        </div>
-                    `;
-
-                    if (data.collections.length > 0) {
-                        const mainCollection = data.collections.find(c => c.name === 'pdf_documents') || data.collections[0];
-                        statsHtml += `
-                            <div class="db-stat-card">
-                                <div class="db-stat-number">${mainCollection.vectors_count.toLocaleString()}</div>
-                                <div class="db-stat-label">PDF Chunks</div>
-                            </div>
-                        `;
-                    }
-
-                    statsHtml += '</div>';
-                    statsArea.innerHTML = statsHtml;
-                } else {
-                    statsArea.innerHTML = `<div class="error">❌ ${data.error || 'Loading error'}</div>`;
-                }
-            } catch (error) {
-                statsArea.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
-            }
-        }
-
-        async function loadDatabaseDocuments() {
-            const documentsArea = document.getElementById('dbDocumentsArea');
-
-            try {
-                const response = await fetch('/api/database/documents?collection_name=pdf_documents&limit=50');
-                const data = await response.json();
-
-                if (response.ok) {
-                    if (!data.documents || data.documents.length === 0) {
-                        documentsArea.innerHTML = `
-                            <div style="text-align: center; padding: 40px; color: #666;">
-                                <div style="font-size: 3rem; margin-bottom: 15px;">📭</div>
-                                <h3>No documents found</h3>
-                                <p>Start by uploading PDFs above</p>
-                            </div>
-                        `;
-                        return;
-                    }
-
-                    let html = `
-                        <div style="background: #e3f2fd; padding: 12px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
-                            <strong style="color: #1976d2;">📊 ${data.total_documents} document(s) • ${data.total_chunks_in_collection.toLocaleString()} chunks total</strong>
-                        </div>
-                    `;
-
-                    data.documents.forEach((doc, index) => {
-                        const avgTokensPerChunk = Math.round(doc.total_tokens / doc.chunk_count);
-
-                        html += `
-                            <div class="document-item">
-                                <div class="document-name">📄 ${doc.filename}</div>
-                                <div class="document-stats">
-                                    <div class="doc-stat"><strong>${doc.chunk_count}</strong> chunks</div>
-                                    <div class="doc-stat"><strong>${doc.total_tokens.toLocaleString()}</strong> tokens</div>
-                                    <div class="doc-stat"><strong>${avgTokensPerChunk}</strong> tokens/chunk</div>
-                                    <div class="doc-stat"><strong>${(doc.total_chars / 1000).toFixed(1)}k</strong> characters</div>
-                                </div>
-                                <button class="chunks-toggle" onclick="toggleChunks('${index}')">
-                                    👁️ View chunks preview
-                                </button>
-                                <div class="chunks-preview" id="chunks-${index}">
-                                    ${doc.chunks.slice(0, 3).map(chunk => `
-                                        <div class="chunk-preview-item">
-                                            <div class="chunk-preview-header">Chunk #${chunk.chunk_id} (${chunk.token_count} tokens)</div>
-                                            <div>${chunk.text_preview}</div>
-                                        </div>
-                                    `).join('')}
-                                    ${doc.chunks.length > 3 ? `<div style="text-align: center; color: #666; margin-top: 8px; font-size: 0.85rem;">... and ${doc.chunks.length - 3} more chunks</div>` : ''}
-                                </div>
-                            </div>
-                        `;
-                    });
-
-                    documentsArea.innerHTML = html;
-                } else {
-                    documentsArea.innerHTML = `<div class="error">❌ ${data.error || 'Loading error'}</div>`;
-                }
-            } catch (error) {
-                documentsArea.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
-            }
-        }
-
-        function toggleChunks(index) {
-            const chunksDiv = document.getElementById(`chunks-${index}`);
-            chunksDiv.classList.toggle('show');
-        }
     </script>
 </body>
 </html>

@@ -1348,6 +1348,89 @@ def get_all_documents():
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/api/database/documents/list')
+def list_unique_documents():
+    """
+    Liste TOUS les documents uniques dans la collection (scalable).
+    Retourne seulement les métadonnées de base sans charger tout le contenu.
+
+    Query params:
+    - collection_name: nom de la collection (défaut: pdf_documents)
+    - search: terme de recherche pour filtrer par nom de fichier (optionnel)
+    """
+    try:
+        collection_name = request.args.get('collection_name', 'pdf_documents')
+        search_term = request.args.get('search', '').lower()
+
+        client = get_qdrant_client()
+
+        # Vérifier si la collection existe
+        try:
+            collection_info = client.get_collection(collection_name)
+            total_chunks = collection_info.points_count
+        except Exception:
+            return jsonify({
+                'error': f'Collection "{collection_name}" not found',
+                'documents': []
+            }), 404
+
+        # Scanner TOUS les chunks pour extraire les noms de fichiers uniques
+        # Utiliser scroll avec limit élevé pour être efficace
+        documents_dict = {}
+        offset = None
+
+        while True:
+            # Scroll en batches de 1000 (efficace sans charger tout en mémoire)
+            points, offset = client.scroll(
+                collection_name=collection_name,
+                limit=1000,
+                offset=offset,
+                with_payload=True,
+                with_vectors=False
+            )
+
+            # Extraire les métadonnées de chaque point
+            for point in points:
+                filename = point.payload.get('filename', 'Unknown')
+
+                # Filtrer par recherche si spécifié
+                if search_term and search_term not in filename.lower():
+                    continue
+
+                if filename not in documents_dict:
+                    documents_dict[filename] = {
+                        'filename': filename,
+                        'chunk_count': 0,
+                        'total_tokens': 0,
+                        'source': point.payload.get('source', 'unknown'),
+                        'job_id': point.payload.get('job_id', 'unknown')
+                    }
+
+                documents_dict[filename]['chunk_count'] += 1
+                documents_dict[filename]['total_tokens'] += point.payload.get('token_count', 0)
+
+            # Si plus de résultats, arrêter
+            if offset is None:
+                break
+
+        # Convertir en liste et trier
+        documents = list(documents_dict.values())
+        documents.sort(key=lambda x: x['chunk_count'], reverse=True)
+
+        return jsonify({
+            'collection_name': collection_name,
+            'documents': documents,
+            'total_documents': len(documents),
+            'total_chunks': total_chunks,
+            'search_term': search_term if search_term else None
+        })
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+
 @app.route('/api/database/stats')
 def get_database_stats():
     """Obtenir les statistiques globales de la base de données."""
